@@ -1,33 +1,42 @@
-# Janban
+# Cinddit
 
-A kanban board for scrum written in Java.
+Its like a blend of Tinder and Reddit but for code!
 
 ### What does it do?
 
-Janban is an application which enables the user to manage their project in a visual manner through the kanban system
-with specific features for the scrum project management framework.
+Cinddit is a social media (prototype) that feels like a fusion of Tinder and Reddit which allows the users to browse and
+share code snippets with others.
 
 ### Who is this for?
 
-Janban is built for anyone who is working on or managing a complex project.
+Cinddit is mainly built for developers (but is usable by anyone) who has too much free time or just simply want
+to share cool snippets of code they wrote or found.
 
 ### Why make this?
 
-I have worked with many tools that implements a kanban board in the past, an example being Jira or just a Trello board.
-However, most of these services are fully online, and also not as customizable. So Janban serves as an applications
-which allows people to use a kanban board fully offline and is also fully customizable (it is open source!).
+There are many general social medias currently available (Twitter, Reddit, Facebook, etc), however, there aren't many
+exclusive for software developers or purpose built for discussions about code. Sites like Stackoverflow and GitHub
+exist, but they are very specialized and not suited for general discussions. Cinddit serves as this general social media
+built for developers who want to share code.
 
 ## User Stories
 
 ### Phase 0
-- As a user, I want to be able to create a project and add it to a list of projects
-- As a user, I want to be able to view all the projects I have created
-- As a user, I want to be able to remove a project I have created
-- As a user, I want to be able to add a column to a project
-- As a user, I want to be able to view all the columns I have created for a project
-- As a user, I want to be able to rename a column within a project
-- As a user, I want to be able to remove a column from a project
-- As a user, I want to be able to add a card to a column of a project and specify the title, description, and tags
-- As a user, I want to be able to view all the cards within a column of a project
-- As a user, I want to be able to edit the title, description, and tags of a card
-- As a user, I want to be able to remove a card from the column of a project
+
+As a user, I want to be able to...
+
+- create an account with a username and password
+- sign in to an account with a username and password
+- logout of my account if I am signed in
+- create a new post with a title, description, and code snippet and add it to my list of posts
+- edit a posts within my list of posts
+- view the list of posts I have created
+- delete a post from my list of posts
+- view a singular random unique (not seen before) post and be able to like it (swipe right) or dislike (swipe left) it
+- view a list of posts that other users and I have created
+- sort the list of posts that other users and I have created either by most recently posted or by most liked
+- search for posts and view the list of resulting posts sorted by relevancy
+- view a specific post with a list of posts that other users and I have created
+- like or dislike the specific post I am viewing
+- favourite the specific post I am viewing and add it to my list of favourites
+- view my list of favourite posts
