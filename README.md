@@ -1,23 +1,21 @@
 # Janban
 
-A kanban board written in Java.
+A kanban board for scrum written in Java.
 
 ### What does it do?
 
-Janban is a simple application which enables the user to manage their project goals and tasks in a visual manner through
-the kanban system.
+Janban is an application which enables the user to manage their project in a visual manner through the kanban system
+with specific features for the scrum project management framework.
 
 ### Who is this for?
 
-Janban is built for anyone who is working on or managing a complex project that needs to be broken down into small tasks
-or goals.
+Janban is built for anyone who is working on or managing a complex project.
 
 ### Why make this?
 
-I have worked with many tools that implements a kanban board in the past, an example being a scrum project on Jira or
-just a Trello board. However, most of these services are fully online, and also not as customizable. So Janban serves as
-a applications which allows people to use a kanban board fully offline and is also fully customizable (it is open
-source!).
+I have worked with many tools that implements a kanban board in the past, an example being Jira or just a Trello board.
+However, most of these services are fully online, and also not as customizable. So Janban serves as an applications
+which allows people to use a kanban board fully offline and is also fully customizable (it is open source!).
 
 ## User Stories
 
