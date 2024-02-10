@@ -1,8 +1,9 @@
 package model;
 
-import java.util.HashSet;
+import model.exceptions.InvalidCardTitleException;
+import model.exceptions.NegativeStoryPointsException;
+
 import java.util.Set;
-import java.util.TreeSet;
 
 // This class represents the most basic unit of organization
 // within a Kanban Board. It stores information relating to
@@ -17,12 +18,20 @@ public class Card {
     private Set<String> tags;
     private int storyPoints;
 
+    // Column which contains the current card,
+    // this information is useful when moving
+    // the card.
+    private Column containingColumn;
+
     public Card(String title,
                 String description,
                 String assignee,
                 CardType type,
                 Set<String> tags,
-                int storyPoints) {
+                int storyPoints) throws NegativeStoryPointsException, InvalidCardTitleException {
+        assertCardTitleValid(title);
+        assertStoryPointsValid(storyPoints);
+
         this.title = title;
         this.description = description;
         this.assignee = assignee;
@@ -63,7 +72,8 @@ public class Card {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(String title) throws InvalidCardTitleException {
+        assertCardTitleValid(title);
         this.title = title;
     }
 
@@ -103,14 +113,30 @@ public class Card {
         return storyPoints;
     }
 
-    // EFFECTS: sets the story point estimate for this card,
-    //          throws an exception if the story point is not a
-    //          non-negative integer
-    public void setStoryPoints(int storyPoints) throws IllegalArgumentException {
-        if (storyPoints < 0) {
-            throw new IllegalArgumentException("Story points must be positive");
-        }
-
+    // EFFECTS: sets the story point estimate for this card.
+    //          throws NegativeStoryPointsException if the story point amount is negative
+    public void setStoryPoints(int storyPoints) throws NegativeStoryPointsException {
+        assertStoryPointsValid(storyPoints);
         this.storyPoints = storyPoints;
+    }
+
+    public Column getContainingColumn() {
+        return containingColumn;
+    }
+
+    public void setContainingColumn(Column containingColumn) {
+        this.containingColumn = containingColumn;
+    }
+
+    private void assertCardTitleValid(String title) throws InvalidCardTitleException {
+        if (title.isBlank()) {
+            throw new InvalidCardTitleException("Card title must not be empty");
+        }
+    }
+
+    private void assertStoryPointsValid(int storyPoints) throws NegativeStoryPointsException {
+        if (storyPoints < 0) {
+            throw new NegativeStoryPointsException("Story points must be positive");
+        }
     }
 }
