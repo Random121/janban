@@ -1,6 +1,7 @@
 package model;
 
-import model.exceptions.FailedToGenerateDefaultColumnsException;
+import model.exceptions.DuplicateColumnException;
+import model.exceptions.EmptyColumnNameException;
 
 // This class represents a project with a name, description,
 // and a corresponding kanban board.
@@ -9,9 +10,10 @@ public class Project {
     private String description;
     private final KanbanBoard kanbanBoard;
 
+    // EFFECTS: constructs a new Project with a name, description, and the name of the completed column
     public Project(String name,
                    String description,
-                   String completedColumnName) throws FailedToGenerateDefaultColumnsException {
+                   String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {
         this.name = name;
         this.description = description;
 

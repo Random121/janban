@@ -14,7 +14,11 @@ public class KanbanBoard {
     // This should be updated every time a column is added or removed
     private Column completedColumn;
 
-    public KanbanBoard(String completedColumnName) throws FailedToGenerateDefaultColumnsException {
+    // EFFECTS: constructs a KanbanBoard with three default columns (backlog, in progress, and complete),
+    //          and sets the name of the compelte column to what is specified.
+    //          throws a DuplicateColumnException if the complete column name is a duplicate.
+    //          throws a EmptyColumnNameException if no complete column name is provided.
+    public KanbanBoard(String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {
         this.columns = new ArrayList<>();
         this.completedColumnName = completedColumnName;
 
@@ -24,29 +28,28 @@ public class KanbanBoard {
     // MODIFIES: this
     // EFFECTS: generates and adds the default backlog, in progress, and
     //          completed column for this board.
-    private void generateDefaultColumns() throws FailedToGenerateDefaultColumnsException {
-        Column backlog;
-        Column inProgress;
-        Column completed;
-
+    //          throws an EmptyColumnNameException if the complete column name is empty
+    //          throws an DuplicateColumnException if the name of the complete column is a duplicate.
+    private void generateDefaultColumns() throws EmptyColumnNameException, DuplicateColumnException {
         try {
-            backlog = new Column("Backlog");
-            inProgress = new Column("In Progress");
-            completed = new Column(completedColumnName);
-        } catch (InvalidColumnNameException e) {
-            throw new FailedToGenerateDefaultColumnsException(e.getMessage());
+            Column backlog = new Column("Backlog");
+            Column inProgress = new Column("In Progress");
+
+            addColumn(backlog);
+            addColumn(inProgress);
+        } catch (EmptyColumnNameException | DuplicateColumnException e) {
+            // These two errors should never occur
+            throw new RuntimeException(e);
         }
 
-        completedColumn = completed;
+        Column completed = new Column(completedColumnName);
 
-        columns.add(backlog);
-        columns.add(inProgress);
-        columns.add(completed);
+        addColumn(completed);
     }
 
     // MODIFIES: this
-    // EFFECTS: adds a new column to this board, throws an exception
-    //          if there is already a column with the same name
+    // EFFECTS: adds a new column to this board.
+    //          throws an DuplicateColumnException if there is already a column with the same name.
     public void addColumn(Column column) throws DuplicateColumnException {
         if (hasColumnWithName(column.getName())) {
             throw new DuplicateColumnException("Column with name '" + column.getName() + "' already exists");
@@ -60,7 +63,7 @@ public class KanbanBoard {
     }
 
     // MODIFIES: this
-    // EFFECTS: removes a column to this board
+    // EFFECTS: removes a column from this board
     public void removeColumn(Column column) {
         if (!columns.contains(column)) {
             return;
@@ -76,7 +79,7 @@ public class KanbanBoard {
     // MODIFIES: this
     // EFFECTS: edits the name of an existing column
     public void editColumnName(Column column,
-                               String newName) throws DuplicateColumnException, InvalidColumnNameException {
+                               String newName) throws DuplicateColumnException, EmptyColumnNameException {
         if (!columns.contains(column)) {
             return;
         }
@@ -88,7 +91,6 @@ public class KanbanBoard {
         column.setName(newName);
     }
 
-    // EFFECTS: get the columns of this board
     public List<Column> getColumns() {
         return columns;
     }
@@ -119,7 +121,7 @@ public class KanbanBoard {
 
     // EFFECTS: returns whether a column with the given
     //          name already exists in this kanban board
-    public boolean hasColumnWithName(String name) {
+    private boolean hasColumnWithName(String name) {
         for (Column column : columns) {
             if (column.getName().equals(name)) {
                 return true;

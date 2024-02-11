@@ -22,7 +22,6 @@ public class JanbanConsoleApp implements RunnableApp {
         System.out.println("====================================");
         System.out.println("Janban: A kanban board made in Java!");
         System.out.println("====================================");
-        ConsoleHelper.newLine();
 
         do {
             displayProjectsMenu();
@@ -37,7 +36,9 @@ public class JanbanConsoleApp implements RunnableApp {
     public void initTesting() {
         try {
             projects.add(new Project("Test Project", "This is a test description", "Done"));
-        } catch (FailedToGenerateDefaultColumnsException e) {
+        } catch (DuplicateColumnException e) {
+            throw new RuntimeException(e);
+        } catch (EmptyColumnNameException e) {
             throw new RuntimeException(e);
         }
     }
@@ -52,29 +53,25 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     private void displayCreatedProjects() {
-        System.out.println("=================");
-        System.out.println("Created projects:");
-        System.out.println("-----------------");
+        displayMenuStart("Created Projects");
 
         if (!projects.isEmpty()) {
-            ConsoleHelper.newLine();
-
             for (int index = 0; index < projects.size(); index++) {
+                ConsoleHelper.newLine();
+
                 Project project = projects.get(index);
                 System.out.println("(" + index + ") " + project.getName());
                 System.out.println("\t- " + project.getDescription());
-
-                ConsoleHelper.newLine();
             }
         } else {
             System.out.println("You haven't created any projects yet!");
         }
 
-        System.out.println("=================");
-        ConsoleHelper.newLine();
+        displayMenuEnd(false);
     }
 
     private void displayProjectMenuOptions() {
+        ConsoleHelper.newLine();
         System.out.println("Project Commands:");
         System.out.println("\t'a' -> Add a new project");
         System.out.println("\t's' -> Select an existing project");
@@ -92,32 +89,20 @@ public class JanbanConsoleApp implements RunnableApp {
                 launchNewProjectWizard();
                 break;
             case "s":
-                // TODO: exception handling
-                int projectIndex = ConsoleHelper.takeIntInput("Enter the index of the project: ");
-                Project selectedProject = projects.get(projectIndex);
-
-                currentProject = selectedProject;
-                currentKanbanBoard = selectedProject.getKanbanBoard();
-
-                displayKanbanBoardMenu();
+                launchKanbanBoardMenu();
                 break;
             case "q":
                 return false;
             default:
-                ConsoleHelper.unknownCommand();
+                displayUnknownCommandError();
                 break;
         }
-
-        ConsoleHelper.newLine();
 
         return true;
     }
 
     private void launchNewProjectWizard() {
-        ConsoleHelper.newLine();
-        System.out.println("==================");
-        System.out.println("New Project Wizard");
-        System.out.println("------------------");
+        displayMenuStart("New Project Wizard");
 
         String name = ConsoleHelper.takeStringInput("Enter a project name: ");
         String description = ConsoleHelper.takeStringInput("Enter a project description: ");
@@ -134,21 +119,30 @@ public class JanbanConsoleApp implements RunnableApp {
             projects.add(newProject);
 
             System.out.println("Added a new project: " + name);
-        } catch (FailedToGenerateDefaultColumnsException e) {
+        } catch (DuplicateColumnException | EmptyColumnNameException e) {
             System.out.println("Failed to add new project: " + e.getMessage());
         }
 
-        ConsoleHelper.newLine();
-        System.out.println("==================");
-
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     //
     // Kanban board menu section
     //
 
-    private void displayKanbanBoardMenu() {
+    private void launchKanbanBoardMenu() {
+        int projectIndex = ConsoleHelper.takeIntInput("Enter the index of the project: ");
+
+        if (!validIndex(projects, projectIndex)) {
+            System.out.println("Invalid project index");
+            return;
+        }
+
+        Project selectedProject = projects.get(projectIndex);
+
+        currentProject = selectedProject;
+        currentKanbanBoard = selectedProject.getKanbanBoard();
+
         do {
             displayKanbanBoard(currentKanbanBoard);
             displayKanbanBoardMenuOptions();
@@ -156,39 +150,34 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     private void displayKanbanBoard(KanbanBoard board) {
-        String title = "Kanban Board for Project '" + currentProject.getName() + "'";
-        int titleLength = title.length();
+        displayMenuStart("Kanban Board for Project '" + currentProject.getName() + "'");
 
-        ConsoleHelper.newLine();
-        System.out.println("=".repeat(titleLength));
-        System.out.println(title);
-        System.out.println("-".repeat(titleLength));
-        ConsoleHelper.newLine();
+        displayColumns(board.getColumns(), board.getCompletedColumn());
 
-        displayColumns(board.getColumns());
-
-        System.out.println("=".repeat(titleLength));
+        displayMenuEnd(false);
     }
 
-    private void displayColumns(List<Column> columns) {
+    private void displayColumns(List<Column> columns, Column completedColumn) {
         for (int index = 0; index < columns.size(); index++) {
+            ConsoleHelper.newLine();
+
             Column column = columns.get(index);
             List<Card> cards = column.getCards();
 
-            System.out.println("(" + index + ") " + column.getName());
+            System.out.println("(" + index + ") " + column.getName() + (column == completedColumn ? " ✅" : ""));
 
             if (!cards.isEmpty()) {
                 displayColumnCards(cards);
             } else {
                 System.out.println("\t- There are no cards in this column!");
             }
-
-            ConsoleHelper.newLine();
         }
     }
 
     private void displayColumns(List<Column> columns, Set<String> keywords) {
         for (int index = 0; index < columns.size(); index++) {
+            ConsoleHelper.newLine();
+
             Column column = columns.get(index);
             List<Card> cards = column.getCardsWithQuery(keywords);
 
@@ -199,13 +188,13 @@ public class JanbanConsoleApp implements RunnableApp {
             } else {
                 System.out.println("\t- There are no cards in this column!");
             }
-
-            ConsoleHelper.newLine();
         }
     }
 
     private void displayColumns(List<Column> columns, CardType type) {
         for (int index = 0; index < columns.size(); index++) {
+            ConsoleHelper.newLine();
+
             Column column = columns.get(index);
             List<Card> cards = column.getCardsOfType(type);
 
@@ -216,8 +205,6 @@ public class JanbanConsoleApp implements RunnableApp {
             } else {
                 System.out.println("\t- There are no cards in this column!");
             }
-
-            ConsoleHelper.newLine();
         }
     }
 
@@ -267,7 +254,7 @@ public class JanbanConsoleApp implements RunnableApp {
             case "b":
                 return false;
             default:
-                ConsoleHelper.unknownCommand();
+                displayUnknownCommandError();
                 break;
         }
 
@@ -312,7 +299,7 @@ public class JanbanConsoleApp implements RunnableApp {
             case "b":
                 return false;
             default:
-                ConsoleHelper.unknownCommand();
+                displayUnknownCommandError();
                 break;
         }
 
@@ -320,10 +307,7 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     private void launchNewColumnWizard() {
-        ConsoleHelper.newLine();
-        System.out.println("=================");
-        System.out.println("New Column Wizard");
-        System.out.println("-----------------");
+        displayMenuStart("New Column Wizard");
 
         String name = ConsoleHelper.takeStringInput("Enter a column name: ");
 
@@ -338,67 +322,59 @@ public class JanbanConsoleApp implements RunnableApp {
             } catch (DuplicateColumnException e) {
                 System.out.println("Failed to add new column: " + e.getMessage());
             }
-        } catch (InvalidColumnNameException e) {
+        } catch (EmptyColumnNameException e) {
             System.out.println("Failed to add new column: " + e.getMessage());
         }
 
-        ConsoleHelper.newLine();
-        System.out.println("=================");
-
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     private void launchEditColumnWizard() {
+        displayMenuStart("Edit Column Wizard");
 
-        ConsoleHelper.newLine();
-        System.out.println("==================");
-        System.out.println("Edit Column Wizard");
-        System.out.println("------------------");
-
-        // TODO: exception handling
         int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
-        Column column = currentKanbanBoard.getColumns().get(columnIndex);
+        List<Column> columns = currentKanbanBoard.getColumns();
 
-        ConsoleHelper.newLine();
+        if (validIndex(columns, columnIndex)) {
+            Column column = columns.get(columnIndex);
 
-        String newName = ConsoleHelper.takeStringInput("Enter a new name for the column: ");
+            String newName = ConsoleHelper.takeStringInput("Enter a new name for the column: ");
 
-        ConsoleHelper.newLine();
+            ConsoleHelper.newLine();
 
-        try {
-            currentKanbanBoard.editColumnName(column, newName);
+            try {
+                currentKanbanBoard.editColumnName(column, newName);
 
-            System.out.println("Edited the column name to '" + newName + "'");
-        } catch (DuplicateColumnException | InvalidColumnNameException e) {
-            System.out.println("Failed to edit the column: " + e.getMessage());
+                System.out.println("Edited the column name to '" + newName + "'");
+            } catch (DuplicateColumnException | EmptyColumnNameException e) {
+                System.out.println("Failed to edit the column: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Invalid column index");
         }
 
-        ConsoleHelper.newLine();
-        System.out.println("=================");
-
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     private void launchDeleteColumnWizard() {
-        ConsoleHelper.newLine();
-        System.out.println("===================");
-        System.out.println("Delete Column Wizard");
-        System.out.println("-------------------");
+        displayMenuStart("Delete Column Wizard");
 
-        // TODO: exception handling
         int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
-        Column column = currentKanbanBoard.getColumns().get(columnIndex);
+        List<Column> columns = currentKanbanBoard.getColumns();
 
-        currentKanbanBoard.removeColumn(column);
+        if (validIndex(columns, columnIndex)) {
+            Column column = columns.get(columnIndex);
 
-        ConsoleHelper.newLine();
+            currentKanbanBoard.removeColumn(column);
 
-        System.out.println("Deleted the column '" + column.getName() + "'.");
+            ConsoleHelper.newLine();
 
-        ConsoleHelper.newLine();
-        System.out.println("=================");
+            System.out.println("Deleted the column '" + column.getName() + "'.");
+        } else {
+            System.out.println("Invalid column index");
+        }
 
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     //
@@ -439,7 +415,7 @@ public class JanbanConsoleApp implements RunnableApp {
             case "b":
                 return false;
             default:
-                ConsoleHelper.unknownCommand();
+                displayUnknownCommandError();
                 break;
         }
 
@@ -447,10 +423,7 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     private void launchNewCardWizard() {
-        ConsoleHelper.newLine();
-        System.out.println("===============");
-        System.out.println("New Card Wizard");
-        System.out.println("---------------");
+        displayMenuStart("New Card Wizard");
 
         if (!currentKanbanBoard.getColumns().isEmpty()) {
             processAddNewCard();
@@ -459,10 +432,7 @@ public class JanbanConsoleApp implements RunnableApp {
             System.out.println("Cannot create a card when there are no columns");
         }
 
-        ConsoleHelper.newLine();
-        System.out.println("===============");
-
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     private void processAddNewCard() {
@@ -487,33 +457,41 @@ public class JanbanConsoleApp implements RunnableApp {
             Column firstColumn = currentKanbanBoard.getColumns().get(0);
 
             currentKanbanBoard.moveCard(newCard, firstColumn);
-        } catch (NegativeStoryPointsException | InvalidCardTitleException e) {
+        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
             System.out.println("Failed to create a card: " + e.getMessage());
         }
     }
 
     private void launchEditCardWizard() {
-        ConsoleHelper.newLine();
-        System.out.println("================");
-        System.out.println("Edit Card Wizard");
-        System.out.println("----------------");
+        displayMenuStart("Edit Card Wizard");
 
-        // TODO: exception handling
         int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
-        Column column = currentKanbanBoard.getColumns().get(columnIndex);
+        List<Column> columns = currentKanbanBoard.getColumns();
 
-        // TODO: exception handling
+        if (!validIndex(columns, columnIndex)) {
+            System.out.println("Invalid column index");
+            displayMenuEnd(true);
+            return;
+        }
+
+        Column column = columns.get(columnIndex);
+
         int cardIndex = ConsoleHelper.takeIntInput("Enter the index of the card: ");
-        Card card = column.getCards().get(cardIndex);
+        List<Card> cards = column.getCards();
+
+        if (!validIndex(cards, cardIndex)) {
+            System.out.println("Invalid card index");
+            displayMenuEnd(true);
+            return;
+        }
+
+        Card card = cards.get(cardIndex);
 
         ConsoleHelper.newLine();
 
         processEditCard(card);
 
-        ConsoleHelper.newLine();
-        System.out.println("================");
-
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     private void processEditCard(Card card) {
@@ -529,7 +507,7 @@ public class JanbanConsoleApp implements RunnableApp {
         if (!title.isBlank()) {
             try {
                 card.setTitle(title);
-            } catch (InvalidCardTitleException e) {
+            } catch (EmptyCardTitleException e) {
                 System.out.println("Ignoring changes: " + e.getMessage());
             }
         }
@@ -585,27 +563,43 @@ public class JanbanConsoleApp implements RunnableApp {
         int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the new parent column (enter -1 to skip): ");
 
         if (columnIndex != -1) {
-            // TODO: exception handling
-            Column newColumn = currentKanbanBoard.getColumns().get(columnIndex);
+            List<Column> columns = currentKanbanBoard.getColumns();
+
+            if (!validIndex(columns, columnIndex)) {
+                System.out.println("Ignoring changes: Invalid column index");
+                return;
+            }
+
+            Column newColumn = columns.get(columnIndex);
 
             currentKanbanBoard.moveCard(card, newColumn);
         }
     }
 
     private void launchDeleteCardWizard() {
+        displayMenuStart("Delete Column Wizard");
 
-        ConsoleHelper.newLine();
-        System.out.println("===================");
-        System.out.println("Delete Column Wizard");
-        System.out.println("-------------------");
-
-        // TODO: exception handling
         int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
-        Column column = currentKanbanBoard.getColumns().get(columnIndex);
+        List<Column> columns = currentKanbanBoard.getColumns();
 
-        // TODO: exception handling
+        if (!validIndex(columns, columnIndex)) {
+            System.out.println("Invalid project index");
+            displayMenuEnd(true);
+            return;
+        }
+
+        Column column = columns.get(columnIndex);
+
         int cardIndex = ConsoleHelper.takeIntInput("Enter the index of the card: ");
-        Card card = column.getCards().get(cardIndex);
+        List<Card> cards = column.getCards();
+
+        if (!validIndex(cards, cardIndex)) {
+            System.out.println("Invalid card index");
+            displayMenuEnd(true);
+            return;
+        }
+
+        Card card = cards.get(cardIndex);
 
         column.removeCard(card);
 
@@ -613,10 +607,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
         System.out.println("Deleted the card '" + card.getTitle() + "'");
 
-        ConsoleHelper.newLine();
-        System.out.println("=================");
-
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     // EFFECTS: parses a string of comma separated keywords
@@ -682,7 +673,7 @@ public class JanbanConsoleApp implements RunnableApp {
                 launchCardTypeFilter();
                 break;
             default:
-                ConsoleHelper.unknownCommand();
+                displayUnknownCommandError();
                 break;
         }
     }
@@ -743,5 +734,49 @@ public class JanbanConsoleApp implements RunnableApp {
         ConsoleHelper.newLine();
 
         ConsoleHelper.pause();
+    }
+
+    //
+    // Utilities
+    //
+
+    private final Deque<String> sectionEnds = new ArrayDeque<>();
+
+    // EFFECTS: displays a simply title for a menu
+    // EXAMPLE:
+    // ===============
+    // This is a title
+    // ---------------
+    private void displayMenuStart(String title) {
+        int titleLength = title.length();
+
+        ConsoleHelper.newLine();
+        System.out.println("=".repeat(titleLength));
+        System.out.println(title);
+        System.out.println("-".repeat(titleLength));
+
+        sectionEnds.push("=".repeat(titleLength));
+    }
+
+    // EFFECTS: displays a corresponding ending delimiter for a menu
+    // EXAMPLE:
+    // ===============
+    private void displayMenuEnd(boolean pause) {
+        ConsoleHelper.newLine();
+        System.out.println(sectionEnds.pop());
+
+        if (pause) {
+            ConsoleHelper.pause();
+        }
+    }
+
+    // EFFECTS: displays an error for an unknown command
+    private void displayUnknownCommandError() {
+        System.out.println("Unknown command");
+        ConsoleHelper.tryAgain();
+    }
+
+    private boolean validIndex(List list, int index) {
+        return index >= 0 && index < list.size();
     }
 }

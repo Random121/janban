@@ -1,6 +1,6 @@
 package model;
 
-import model.exceptions.InvalidColumnNameException;
+import model.exceptions.EmptyColumnNameException;
 
 import java.util.*;
 
@@ -8,14 +8,13 @@ import java.util.*;
 // It organizes and stores Cards that are under the same stage
 // of a workflow.
 public class Column {
-    private static final int MAX_NAME_LENGTH = 25;
-
     private String name;
     private final List<Card> cards;
 
-    // EFFECTS: constructs a new Column with a name and no cards
-    public Column(String name) throws InvalidColumnNameException {
-        assertColumnNameValid(name);
+    // EFFECTS: constructs a new Column with a name and no cards.
+    //          throws an EmptyColumnNameException if the column name is empty.
+    public Column(String name) throws EmptyColumnNameException {
+        assertColumnNameNotEmpty(name);
 
         this.name = name;
         this.cards = new ArrayList<>();
@@ -24,6 +23,10 @@ public class Column {
     // MODIFIES: this
     // EFFECTS: adds a card to this column
     public void addCard(Card card) {
+        if (cards.contains(card)) {
+            return;
+        }
+
         cards.add(card);
         card.setContainingColumn(this);
     }
@@ -31,6 +34,10 @@ public class Column {
     // MODIFIES: this
     // EFFECTS: removes a card from this column
     public void removeCard(Card card) {
+        if (!cards.contains(card)) {
+            return;
+        }
+
         cards.remove(card);
         card.setContainingColumn(null);
     }
@@ -44,6 +51,10 @@ public class Column {
     //          sorted by relevancy, if there are no specified
     //          keywords then all cards are returned
     public List<Card> getCardsWithQuery(Set<String> keywords) {
+        if (keywords.isEmpty()) {
+            return cards;
+        }
+
         ArrayList<Card> results = new ArrayList<>();
         HashMap<Card, Integer> relevancyMapping = new HashMap<>();
 
@@ -59,8 +70,8 @@ public class Column {
             relevancyMapping.put(card, relevancyScore);
         }
 
-        // Sort the cards by relevancy
-        results.sort(Comparator.comparing(relevancyMapping::get));
+        // Sort the cards by relevancy in descending order
+        results.sort(Comparator.comparing(relevancyMapping::get, Comparator.reverseOrder()));
 
         return results;
     }
@@ -83,15 +94,14 @@ public class Column {
         return name;
     }
 
-    // EFFECTS: sets the name of this column
-    //          with a max length of MAX_NAME_LENGTH
-    public void setName(String name) throws InvalidColumnNameException {
-        assertColumnNameValid(name);
+    // EFFECTS: sets the name of this column.
+    //          throws an EmptyColumnNameException if the column name is empty.
+    public void setName(String name) throws EmptyColumnNameException {
+        assertColumnNameNotEmpty(name);
         this.name = name;
     }
 
-    // EFFECTS: gets the total story points of
-    //          all cards within this column
+    // EFFECTS: gets the total story points of all cards within this column
     public int getTotalStoryPoints() {
         int storyPoints = 0;
 
@@ -102,15 +112,9 @@ public class Column {
         return storyPoints;
     }
 
-    private void assertColumnNameValid(String name) throws InvalidColumnNameException {
+    private void assertColumnNameNotEmpty(String name) throws EmptyColumnNameException {
         if (name.isBlank()) {
-            throw new InvalidColumnNameException("Column name must not be empty");
-        }
-
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new InvalidColumnNameException("Column name must not be longer than "
-                                                 + MAX_NAME_LENGTH
-                                                 + " characters. Given '" + name + "'");
+            throw new EmptyColumnNameException("Column name must not be empty");
         }
     }
 }
