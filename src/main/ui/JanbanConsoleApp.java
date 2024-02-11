@@ -36,9 +36,7 @@ public class JanbanConsoleApp implements RunnableApp {
     public void initTesting() {
         try {
             projects.add(new Project("Test Project", "This is a test description", "Done"));
-        } catch (DuplicateColumnException e) {
-            throw new RuntimeException(e);
-        } catch (EmptyColumnNameException e) {
+        } catch (DuplicateColumnException | EmptyColumnNameException e) {
             throw new RuntimeException(e);
         }
     }
@@ -776,7 +774,7 @@ public class JanbanConsoleApp implements RunnableApp {
         ConsoleHelper.tryAgain();
     }
 
-    private boolean validIndex(List list, int index) {
+    private boolean validIndex(List<?> list, int index) {
         return index >= 0 && index < list.size();
     }
 }
