@@ -23,9 +23,7 @@ public class JanbanConsoleApp implements RunnableApp {
         System.out.println("Janban: A kanban board made in Java!");
         System.out.println("====================================");
 
-        do {
-            displayProjectsMenu();
-        } while (processProjectsMenuInput());
+        launchProjectsMenu();
 
         ConsoleHelper.newLine();
         System.out.println("===================================");
@@ -45,9 +43,11 @@ public class JanbanConsoleApp implements RunnableApp {
     // Project menu section
     //
 
-    private void displayProjectsMenu() {
-        displayCreatedProjects();
-        displayProjectMenuOptions();
+    private void launchProjectsMenu() {
+        do {
+            displayCreatedProjects();
+            displayProjectMenuOptions();
+        } while (processProjectsMenuInput());
     }
 
     private void displayCreatedProjects() {
@@ -238,13 +238,13 @@ public class JanbanConsoleApp implements RunnableApp {
 
         switch (command) {
             case "k":
-                displayColumnActionMenu();
+                launchColumnActionMenu();
                 break;
             case "c":
-                displayCardActionMenu();
+                launchCardActionMenu();
                 break;
             case "f":
-                displayFilteringMenu();
+                launchFilteringMenu();
                 break;
             case "v":
                 displayKanbanBoardStats();
@@ -263,7 +263,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // Column menu section
     //
 
-    private void displayColumnActionMenu() {
+    private void launchColumnActionMenu() {
         do {
             displayColumnActionMenuOptions();
         } while (processColumnActionMenuInput());
@@ -379,7 +379,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // Card menu section
     //
 
-    private void displayCardActionMenu() {
+    private void launchCardActionMenu() {
         do {
             displayCardActionMenuOptions();
         } while (processCardActionMenuInput());
@@ -451,7 +451,10 @@ public class JanbanConsoleApp implements RunnableApp {
         }
 
         try {
-            Card newCard = new Card(title, description, assignee, type, parseKeywordsFromString(tags), storyPoints);
+            Card newCard = new Card(title, description,
+                                    assignee, type,
+                                    parseKeywordsFromString(tags),
+                                    storyPoints);
             Column firstColumn = currentKanbanBoard.getColumn(0);
 
             currentKanbanBoard.moveCard(newCard, firstColumn);
@@ -558,7 +561,8 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     private void editCardColumn(Card card) {
-        int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the new parent column (enter -1 to skip): ");
+        int columnIndex = ConsoleHelper.takeIntInput(
+                "Enter the index of the new parent column (enter -1 to skip): ");
 
         if (columnIndex != -1) {
             List<Column> columns = currentKanbanBoard.getColumns();
@@ -647,7 +651,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // Filtering menu section
     //
 
-    private void displayFilteringMenu() {
+    private void launchFilteringMenu() {
         displayFilteringMenuOptions();
         processFilteringMenuInput();
     }
@@ -679,31 +683,27 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchCardSearch() {
         ConsoleHelper.newLine();
 
-        String keywordString = ConsoleHelper.takeStringInput(
-                "Enter some comma separated keywords: ");
+        String keywordString = ConsoleHelper.takeStringInput("Enter some comma separated keywords: ");
         Set<String> keywords = parseKeywordsFromString(keywordString);
 
-        ConsoleHelper.newLine();
+        displayMenuStart("Search Results for '" + String.join(", ", keywords) + "'");
 
         displayColumns(currentKanbanBoard.getColumns(), keywords);
 
-        ConsoleHelper.newLine();
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     private void launchCardTypeFilter() {
         ConsoleHelper.newLine();
 
-        String typeString = ConsoleHelper.takeStringInput(
-                "Enter a card type (story/task/issue): ");
+        String typeString = ConsoleHelper.takeStringInput("Enter a card type (story/task/issue): ");
         CardType type = parseTypeFromString(typeString);
 
-        ConsoleHelper.newLine();
+        displayMenuStart("Search Results for Card Type '" + type + "'");
 
         displayColumns(currentKanbanBoard.getColumns(), type);
 
-        ConsoleHelper.newLine();
-        ConsoleHelper.pause();
+        displayMenuEnd(true);
     }
 
     //
