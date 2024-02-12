@@ -66,29 +66,29 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void constructorSuccessTest() {
-        KanbanBoard boardSuccess = null;
+    public void testConstructorSuccess() {
+        KanbanBoard board = null;
 
         try {
-            boardSuccess = new KanbanBoard(COMPLETED_COLUMN_NAME);
+            board = new KanbanBoard(COMPLETED_COLUMN_NAME);
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
 
-        assertNotNull(boardSuccess);
-        assertNotNull(boardSuccess.getCompletedColumn());
+        assertNotNull(board);
+        assertNotNull(board.getCompletedColumn());
 
-        assertEquals(3, boardSuccess.getColumns().size());
+        assertEquals(3, board.getColumns().size());
 
-        assertEquals("Backlog", boardSuccess.getColumn(0).getName());
-        assertEquals("In Progress", boardSuccess.getColumn(1).getName());
+        assertEquals("Backlog", board.getColumn(0).getName());
+        assertEquals("In Progress", board.getColumn(1).getName());
 
-        assertEquals(COMPLETED_COLUMN_NAME, boardSuccess.getCompletedColumn().getName());
-        assertEquals(boardSuccess.getColumn(2), boardSuccess.getCompletedColumn());
+        assertEquals(COMPLETED_COLUMN_NAME, board.getCompletedColumn().getName());
+        assertEquals(board.getColumn(2), board.getCompletedColumn());
     }
 
     @Test
-    public void constructorDuplicateColumnTest() {
+    public void testConstructorDuplicateColumnName() {
         try {
             new KanbanBoard("Backlog");
             fail("An exception should have been thrown");
@@ -100,7 +100,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void constructorEmptyColumnNameTest() {
+    public void testConstructorEmptyColumnName() {
         try {
             new KanbanBoard("");
             fail("An exception should have been thrown");
@@ -112,7 +112,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void addColumnOnceTest() {
+    public void testAddColumnOnce() {
         // Normal add
         try {
             board.addColumn(column1);
@@ -124,8 +124,10 @@ public class KanbanBoardTest {
         assertTrue(board.getColumns().contains(column1));
         assertEquals(column1, board.getColumn(board.getColumnCount() - 1));
         assertNotEquals(column1, board.getCompletedColumn());
+    }
 
-        // Add a duplicate column
+    @Test
+    public void testAddColumnOnceDuplicate() {
         Column duplicateColumn = null;
 
         try {
@@ -143,7 +145,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void addColumnOnceCompletedTest() {
+    public void testAddColumnOnceCompleted() {
         Column oldCompletedColumn = board.getCompletedColumn();
 
         board.removeColumn(oldCompletedColumn);
@@ -171,7 +173,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void addColumnMultipleTest() {
+    public void testAddColumnMultiple() {
         try {
             board.addColumn(column1);
         } catch (DuplicateColumnException e) {
@@ -197,7 +199,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void removeColumnOnceTest() {
+    public void testRemoveColumnOnce() {
         try {
             board.addColumn(column1);
             board.addColumn(column2);
@@ -220,7 +222,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void removeColumnOnceCompletedTest() {
+    public void testRemoveColumnOnceCompleted() {
         // Column is completed column
         Column oldCompletedColumn = board.getCompletedColumn();
 
@@ -232,7 +234,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void removeColumnMultipleTest() {
+    public void testRemoveColumnMultiple() {
         try {
             board.addColumn(column1);
             board.addColumn(column2);
@@ -263,7 +265,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void editColumnNameTest() {
+    public void testEditColumnName() {
         // Normal edit
         Column secondColumn = board.getColumn(1);
 
@@ -286,8 +288,12 @@ public class KanbanBoardTest {
 
         assertEquals(oldColumn2Name, column2.getName());
         assertNotEquals("New Column 2", column2.getName());
+    }
 
-        // Exceptions thrown
+    @Test
+    public void testEditColumnNameDuplicate() {
+        Column secondColumn = board.getColumn(1);
+
         try {
             board.editColumnName(secondColumn, COMPLETED_COLUMN_NAME);
             fail("An exception should have been thrown");
@@ -296,6 +302,11 @@ public class KanbanBoardTest {
         } catch (EmptyColumnNameException e) {
             fail("Wrong exception thrown");
         }
+    }
+
+    @Test
+    public void testEditColumnNameEmpty() {
+        Column secondColumn = board.getColumn(1);
 
         try {
             board.editColumnName(secondColumn, "");
@@ -308,7 +319,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void editColumnNameCompletedTest() {
+    public void testEditColumnNameCompleted() {
         // Column is a completed column, becomes not completed
         Column oldCompletedColumn = board.getCompletedColumn();
 
@@ -336,7 +347,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void moveCardOnceTest() {
+    public void testMoveCardOnce() {
         board.getColumn(0).addCard(card1);
         board.getColumn(1).addCard(card2);
 
@@ -354,7 +365,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void getTotalStoryPointsTest() {
+    public void testGetTotalStoryPoints() {
         try {
             board.addColumn(column1);
         } catch (DuplicateColumnException e) {
@@ -373,7 +384,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void getCompletedStoryPointsTest() {
+    public void testGetCompletedStoryPoints() {
         // No cards
         assertEquals(0, board.getCompletedStoryPoints());
 
@@ -391,7 +402,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void getCardCountTest() {
+    public void testGetCardCount() {
         // No cards
         assertEquals(0, board.getCardCount(true));
         assertEquals(0, board.getCardCount(false));

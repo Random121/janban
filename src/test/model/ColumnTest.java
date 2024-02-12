@@ -78,23 +78,23 @@ public class ColumnTest {
     }
 
     @Test
-    public void constructorSuccessTest() {
-        Column columnSuccess = null;
+    public void testConstructor() {
+        Column column = null;
 
         try {
-            columnSuccess = new Column("My Column");
+            column = new Column("My Column");
         } catch (EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
 
-        assertNotNull(columnSuccess);
-        assertEquals("My Column", columnSuccess.getName());
-        assertNotNull(columnSuccess.getCards());
-        assertTrue(columnSuccess.getCards().isEmpty());
+        assertNotNull(column);
+        assertEquals("My Column", column.getName());
+        assertNotNull(column.getCards());
+        assertTrue(column.getCards().isEmpty());
     }
 
     @Test
-    public void constructorEmptyColumnNameTest() {
+    public void testConstructorEmptyColumnName() {
         try {
             new Column("");
             fail("An exception should have been thrown");
@@ -104,7 +104,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void addCardOnceTest() {
+    public void testAddCardOnce() {
         column.addCard(card1);
 
         assertEquals(1, column.getCards().size());
@@ -114,7 +114,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void addCardMultipleTest() {
+    public void testAddCardMultiple() {
         column.addCard(card1);
 
         assertEquals(1, column.getCards().size());
@@ -142,7 +142,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void removeCardOnceTest() {
+    public void testRemoveCardOnce() {
         column.addCard(card1);
         column.removeCard(card1);
 
@@ -152,7 +152,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void removeCardMultipleTest() {
+    public void testRemoveCardMultiple() {
         column.addCard(card1);
         column.addCard(card3);
 
@@ -180,7 +180,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void getCardsWithQueryTest() {
+    public void testGetCardsWithQuery() {
         column.addCard(card1);
         column.addCard(card2);
         column.addCard(card3);
@@ -210,7 +210,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void getCardsOfTypeTest() {
+    public void testGetCardsOfType() {
         column.addCard(card1);
         column.addCard(card2);
         column.addCard(card3);
@@ -229,7 +229,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void getTotalStoryPointsTest() {
+    public void testGetTotalStoryPoints() {
         assertEquals(0, column.getTotalStoryPoints());
 
         column.addCard(card1);
@@ -241,7 +241,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void setNameSuccessTest() {
+    public void testSetName() {
         try {
             column.setName("New Name");
         } catch (EmptyColumnNameException e) {
@@ -252,7 +252,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void setNameEmptyTest() {
+    public void testSetNameEmpty() {
         try {
             column.setName("");
             fail("An exception should have been thrown");

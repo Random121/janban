@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 public class CardTypeTest {
     @Test
-    public void toStringTest() {
+    public void testToString() {
         assertEquals("User Story", CardType.USER_STORY.toString());
         assertEquals("Task", CardType.TASK.toString());
         assertEquals("Issue", CardType.ISSUE.toString());

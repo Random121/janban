@@ -37,11 +37,11 @@ public class CardTest {
     }
 
     @Test
-    public void constructorSuccessTest() {
-        Card cardSuccess = null;
+    public void testConstructor() {
+        Card card = null;
 
         try {
-            cardSuccess = new Card("Center a div on the UI",
+            card = new Card("Center a div on the UI",
                                    "This div needs to be centered",
                                    "John Doe",
                                    CardType.ISSUE,
@@ -51,18 +51,18 @@ public class CardTest {
             fail("An exception should not have been thrown");
         }
 
-        assertNotNull(cardSuccess);
-        assertEquals("Center a div on the UI", cardSuccess.getTitle());
-        assertEquals("This div needs to be centered", cardSuccess.getDescription());
-        assertEquals("John Doe", cardSuccess.getAssignee());
-        assertEquals(CardType.ISSUE, cardSuccess.getType());
-        assertEquals(tags, cardSuccess.getTags());
-        assertEquals(8, cardSuccess.getStoryPoints());
-        assertNull(cardSuccess.getContainingColumn());
+        assertNotNull(card);
+        assertEquals("Center a div on the UI", card.getTitle());
+        assertEquals("This div needs to be centered", card.getDescription());
+        assertEquals("John Doe", card.getAssignee());
+        assertEquals(CardType.ISSUE, card.getType());
+        assertEquals(tags, card.getTags());
+        assertEquals(8, card.getStoryPoints());
+        assertNull(card.getContainingColumn());
     }
 
     @Test
-    public void constructorEmptyTitleTest() {
+    public void testConstructorEmptyTitle() {
         try {
             new Card("",
                      "This div needs to be centered",
@@ -79,7 +79,7 @@ public class CardTest {
     }
 
     @Test
-    public void constructorNegativeStoryPointsTest() {
+    public void testConstructorNegativeStoryPoints() {
         try {
             new Card("This is a title",
                      "This is a description",
@@ -96,7 +96,7 @@ public class CardTest {
     }
 
     @Test
-    public void getQueryRelevancyScoreSingleKeywordMatchTest() {
+    public void testGetQueryRelevancyScoreSingleKeyword() {
         // One keyword that matches the title, description, and tags
         Set<String> singleKeywordMatchAll = new HashSet<>() {{
             add("center");
@@ -106,7 +106,7 @@ public class CardTest {
     }
 
     @Test
-    public void getQueryRelevancyScoreRandomCaseTest() {
+    public void testGetQueryRelevancyScoreRandomCase() {
         // One keyword that matches the title, description, and tags but has random case (randomly
         // upper and lower case)
         Set<String> singleKeywordMatchAllRandomCase = new HashSet<>() {{
@@ -117,8 +117,8 @@ public class CardTest {
     }
 
     @Test
-    public void getQueryRelevancyScoreMatchNoneTest() {
-        // One keyword that matches nothing
+    public void testGetQueryRelevancyScoreMatchNone() {
+        // Keyword that matches nothing
         Set<String> singleKeywordMatchNone = new HashSet<>() {{
             add("left");
         }};
@@ -127,7 +127,7 @@ public class CardTest {
     }
 
     @Test
-    public void getQueryRelevancyScoreMultipleTest() {
+    public void testGetQueryRelevancyScoreMultiple() {
         // Multiple keyword that matches sometimes or not at all
         // some also has random case
         Set<String> multipleKeywords = new HashSet<>() {{
@@ -141,7 +141,7 @@ public class CardTest {
     }
 
     @Test
-    public void setTitleTest() {
+    public void testSetTitle() {
         try {
             card.setTitle("New Title");
         } catch (EmptyCardTitleException e) {
@@ -152,7 +152,7 @@ public class CardTest {
     }
 
     @Test
-    public void setTitleEmptyTest() {
+    public void testSetTitleEmpty() {
         try {
             card.setTitle("");
             fail("An exception should have been thrown");
@@ -162,28 +162,28 @@ public class CardTest {
     }
 
     @Test
-    public void setDescriptionTest() {
+    public void testSetDescription() {
         card.setDescription("New Description");
 
         assertEquals("New Description", card.getDescription());
     }
 
     @Test
-    public void setAssigneeTest() {
+    public void testSetAssignee() {
         card.setAssignee("New Assignee");
 
         assertEquals("New Assignee", card.getAssignee());
     }
 
     @Test
-    public void setTypeTest() {
+    public void testSetType() {
         card.setType(CardType.ISSUE);
 
         assertEquals(CardType.ISSUE, card.getType());
     }
 
     @Test
-    public void setTagsTest() {
+    public void testSetTags() {
         Set<String> newTags = new HashSet<>() {{
             add("new_tag");
             add("another_tag");
@@ -195,7 +195,7 @@ public class CardTest {
     }
 
     @Test
-    public void setStoryPointsTest() {
+    public void testSetStoryPoints() {
         try {
             card.setStoryPoints(50);
         } catch (NegativeStoryPointsException e) {
@@ -206,7 +206,7 @@ public class CardTest {
     }
 
     @Test
-    public void setStoryPointsNegativeTest() {
+    public void testSetStoryPointsNegative() {
         try {
             card.setStoryPoints(-10);
             fail("An exception should have been thrown");
