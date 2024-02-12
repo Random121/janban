@@ -66,7 +66,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void constructorTest() {
+    public void constructorSuccessTest() {
         KanbanBoard boardSuccess = null;
 
         try {
@@ -85,23 +85,29 @@ public class KanbanBoardTest {
 
         assertEquals(COMPLETED_COLUMN_NAME, boardSuccess.getCompletedColumn().getName());
         assertEquals(boardSuccess.getColumn(2), boardSuccess.getCompletedColumn());
+    }
 
+    @Test
+    public void constructorDuplicateColumnTest() {
         try {
-            KanbanBoard boardFail = new KanbanBoard("");
+            new KanbanBoard("Backlog");
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
-            fail("Wrong exception thrown");
-        } catch (EmptyColumnNameException e) {
             // This exception should have been thrown
+        } catch (EmptyColumnNameException e) {
+            fail("Wrong exception thrown");
         }
+    }
 
+    @Test
+    public void constructorEmptyColumnNameTest() {
         try {
-            KanbanBoard boardFail = new KanbanBoard("Backlog");
+            new KanbanBoard("");
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
-            // This exception should have been thrown
-        } catch (EmptyColumnNameException e) {
             fail("Wrong exception thrown");
+        } catch (EmptyColumnNameException e) {
+            // This exception should have been thrown
         }
     }
 

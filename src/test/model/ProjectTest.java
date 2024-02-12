@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class ProjectTest {
     @Test
-    public void constructorTest() {
+    public void constructorSuccessTest() {
         Project projectSuccess = null;
 
         try {
@@ -24,22 +24,28 @@ public class ProjectTest {
         assertEquals("This is my project", projectSuccess.getDescription());
         assertNotNull(projectSuccess.getKanbanBoard());
         assertEquals("Completed", projectSuccess.getKanbanBoard().getCompletedColumn().getName());
+    }
 
+    @Test
+    public void constructorDuplicateColumnTest() {
         try {
-            Project projectFail = new Project("My Project",
-                                              "This is my project",
-                                              "Backlog");
+            new Project("My Project",
+                        "This is my project",
+                        "Backlog");
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
             // This exception should have been thrown
         } catch (EmptyColumnNameException e) {
             fail("Wrong exception thrown");
         }
+    }
 
+    @Test
+    public void constructorEmptyColumnNameTest() {
         try {
-            Project projectFail = new Project("My Project",
-                                              "This is my project",
-                                              "");
+            new Project("My Project",
+                        "This is my project",
+                        "");
             fail("An exception should have been thrown");
         } catch (EmptyColumnNameException e) {
             // This exception should have been thrown

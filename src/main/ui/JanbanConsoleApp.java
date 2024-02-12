@@ -108,8 +108,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
         String name = ConsoleHelper.takeStringInput("Enter a project name: ");
         String description = ConsoleHelper.takeStringInput("Enter a project description: ");
-        String completedColumnName = ConsoleHelper.takeStringInput(
-                "Enter the name of the completed column (default: 'Done'): ");
+        String completedColumnName = ConsoleHelper.takeStringInput("Enter the done column name (default: 'Done'): ");
 
         completedColumnName = completedColumnName.isBlank() ? "Done" : completedColumnName;
 
@@ -467,10 +466,10 @@ public class JanbanConsoleApp implements RunnableApp {
     // EFFECTS: adds a new card to the kanban board based on user inputs
     private void doAddNewCard() {
         String title = ConsoleHelper.takeStringInput("Enter a title: ");
-        String description = ConsoleHelper.takeStringInput("Enter a description: ");
-        String assignee = ConsoleHelper.takeStringInput("Enter an assignee: ");
+        String description = ConsoleHelper.takeStringInput("Enter a description (optional): ");
+        String assignee = ConsoleHelper.takeStringInput("Enter an assignee (optional): ");
         String typeString = ConsoleHelper.takeStringInput("Enter a type (story/task/issue): ");
-        String tags = ConsoleHelper.takeStringInput("Enter some comma separated tags: ");
+        String tags = ConsoleHelper.takeStringInput("Enter some comma separated tags (optional): ");
         int storyPoints = ConsoleHelper.takeIntInput("Enter the number of story points: ");
 
         ConsoleHelper.newLine();
@@ -478,7 +477,7 @@ public class JanbanConsoleApp implements RunnableApp {
         CardType type = parseTypeFromString(typeString);
 
         if (type == null) {
-            System.out.println("Failed to create a card: Card type can only be one of story, task, and issue");
+            System.out.println("Failed to create a card: Card type can only be one of story, task, or issue");
             return;
         }
 
@@ -540,29 +539,29 @@ public class JanbanConsoleApp implements RunnableApp {
     // MODIFIES: card
     // EFFECTS: edits the string properties of specified card based on user inputs
     private void editCardStringOptions(Card card) {
-        String title = ConsoleHelper.takeStringInput("Enter a new title (put nothing to skip): ");
+        String title = ConsoleHelper.takeStringInput("Enter a new title (optional): ");
 
         if (!title.isBlank()) {
             try {
                 card.setTitle(title);
             } catch (EmptyCardTitleException e) {
-                System.out.println("Ignoring changes: " + e.getMessage());
+                System.out.println("Ignoring edit: " + e.getMessage());
             }
         }
 
-        String description = ConsoleHelper.takeStringInput("Enter a new description (put nothing to skip): ");
+        String description = ConsoleHelper.takeStringInput("Enter a new description (optional): ");
 
         if (!description.isBlank()) {
             card.setDescription(description);
         }
 
-        String assignee = ConsoleHelper.takeStringInput("Enter a new assignee (put nothing to skip): ");
+        String assignee = ConsoleHelper.takeStringInput("Enter a new assignee (optional): ");
 
         if (!assignee.isBlank()) {
             card.setAssignee(assignee);
         }
 
-        String tags = ConsoleHelper.takeStringInput("Enter some comma separated tags (put nothing to skip): ");
+        String tags = ConsoleHelper.takeStringInput("Enter some comma separated tags (optional): ");
 
         if (!tags.isBlank()) {
             card.setTags(parseKeywordsFromString(tags));
@@ -572,14 +571,13 @@ public class JanbanConsoleApp implements RunnableApp {
     // MODIFIES: card
     // EFFECTS: edits the type of the card based on user inputs
     private void editCardType(Card card) {
-        String typeString = ConsoleHelper.takeStringInput(
-                "Enter a new type (story/task/issue) (put nothing to skip): ");
+        String typeString = ConsoleHelper.takeStringInput("Enter a new type (story/task/issue) (optional): ");
 
         if (!typeString.isBlank()) {
             CardType type = parseTypeFromString(typeString);
 
             if (type == null) {
-                System.out.println("Ignoring changes: Card type can only be one of story, task, and issue");
+                System.out.println("Ignoring edit: Card type can only be one of story, task, or issue");
                 return;
             }
 
@@ -596,7 +594,7 @@ public class JanbanConsoleApp implements RunnableApp {
             try {
                 card.setStoryPoints(storyPoints);
             } catch (NegativeStoryPointsException e) {
-                System.out.println("Ignoring changes: " + e.getMessage());
+                System.out.println("Ignoring edit: " + e.getMessage());
             }
         }
     }
@@ -611,7 +609,7 @@ public class JanbanConsoleApp implements RunnableApp {
             List<Column> columns = currentKanbanBoard.getColumns();
 
             if (!validIndex(columns, columnIndex)) {
-                System.out.println("Ignoring changes: Invalid column index");
+                System.out.println("Ignoring edit: Invalid column index");
                 return;
             }
 

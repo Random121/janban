@@ -78,7 +78,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void constructorTest() {
+    public void constructorSuccessTest() {
         Column columnSuccess = null;
 
         try {
@@ -91,7 +91,10 @@ public class ColumnTest {
         assertEquals("My Column", columnSuccess.getName());
         assertNotNull(columnSuccess.getCards());
         assertTrue(columnSuccess.getCards().isEmpty());
+    }
 
+    @Test
+    public void constructorEmptyColumnNameTest() {
         try {
             new Column("");
             fail("An exception should have been thrown");
