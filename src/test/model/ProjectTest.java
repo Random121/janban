@@ -4,16 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import model.exceptions.DuplicateColumnException;
 import model.exceptions.EmptyColumnNameException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ProjectTest {
-
-    @BeforeEach
-    public void setup() {
-
-    }
-
     @Test
     public void constructorTest() {
         Project projectSuccess = null;
@@ -23,7 +16,7 @@ public class ProjectTest {
                                          "This is my project",
                                          "Completed");
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
-            fail("This should not fail");
+            fail("An exception should not have been thrown");
         }
 
         assertNotNull(projectSuccess);
@@ -36,22 +29,22 @@ public class ProjectTest {
             Project projectFail = new Project("My Project",
                                               "This is my project",
                                               "Backlog");
-            fail("This should fail for invalid column name");
+            fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
-            // This exception should occur
+            // This exception should have been thrown
         } catch (EmptyColumnNameException e) {
-            fail("Wrong exception");
+            fail("Wrong exception thrown");
         }
 
         try {
             Project projectFail = new Project("My Project",
                                               "This is my project",
                                               "");
-            fail("This should fail for invalid column name");
+            fail("An exception should have been thrown");
         } catch (EmptyColumnNameException e) {
-            // This exception should occur
+            // This exception should have been thrown
         } catch (DuplicateColumnException e) {
-            fail("Wrong exception");
+            fail("Wrong exception thrown");
         }
     }
 }

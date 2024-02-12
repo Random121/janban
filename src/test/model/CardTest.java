@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CardTest {
-    Card card;
+    private Card card;
 
     @BeforeEach
     public void setup() {
@@ -30,19 +30,17 @@ public class CardTest {
                             CardType.ISSUE,
                             tags,
                             8);
-        } catch (NegativeStoryPointsException e) {
-            fail("Story points should not be negative");
-        } catch (EmptyCardTitleException e) {
-            fail("Card title should not be invalid");
+        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+            fail("An exception should not have been thrown");
         }
     }
 
     @Test
     public void constructorTest() {
-        Set<String> tags = new HashSet<>();
-
-        tags.add("fix");
-        tags.add("ui");
+        Set<String> tags = new HashSet<>() {{
+            add("fix");
+            add("ui");
+        }};
 
         Card cardSuccess = null;
 
@@ -53,10 +51,8 @@ public class CardTest {
                                    CardType.ISSUE,
                                    tags,
                                    8);
-        } catch (NegativeStoryPointsException e) {
-            fail("Story points is not negative");
-        } catch (EmptyCardTitleException e) {
-            fail("Card title is not invalid");
+        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+            fail("An exception should not have been thrown");
         }
 
         assertNotNull(cardSuccess);
@@ -75,11 +71,11 @@ public class CardTest {
                                           CardType.USER_STORY,
                                           tags,
                                           8);
-            fail("Constructor should throw exception for card title");
+            fail("An exception should have been thrown");
         } catch (NegativeStoryPointsException e) {
-            fail("Story points is not negative");
+            fail("Wrong exception thrown");
         } catch (EmptyCardTitleException e) {
-            // This exception should occur
+            // This exception should have been thrown
         }
 
         try {
@@ -89,11 +85,11 @@ public class CardTest {
                                                 CardType.TASK,
                                                 tags,
                                                 -1);
-            fail("Constructor should throw exception for story points");
+            fail("An exception should have been thrown");
         } catch (NegativeStoryPointsException e) {
-            // This exception should occur
+            // This exception should have been thrown
         } catch (EmptyCardTitleException e) {
-            fail("Card title is not invalid");
+            fail("Wrong exception thrown");
         }
     }
 
@@ -131,6 +127,5 @@ public class CardTest {
         }};
 
         assertEquals(6, card.getQueryRelevancyScore(multipleKeywords));
-
     }
 }

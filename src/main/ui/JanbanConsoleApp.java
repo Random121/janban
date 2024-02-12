@@ -452,7 +452,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
         try {
             Card newCard = new Card(title, description, assignee, type, parseKeywordsFromString(tags), storyPoints);
-            Column firstColumn = currentKanbanBoard.getColumns().get(0);
+            Column firstColumn = currentKanbanBoard.getColumn(0);
 
             currentKanbanBoard.moveCard(newCard, firstColumn);
         } catch (NegativeStoryPointsException | EmptyCardTitleException e) {

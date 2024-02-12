@@ -12,18 +12,18 @@ import java.util.HashSet;
 import java.util.List;
 
 public class ColumnTest {
-    Column column;
-    Card card1;
-    Card card2;
-    Card card3;
-    Card card4;
+    private Column column;
+    private Card card1;
+    private Card card2;
+    private Card card3;
+    private Card card4;
 
     @BeforeEach
     public void setup() {
         try {
             column = new Column("Backlog");
         } catch (EmptyColumnNameException e) {
-            fail("This exception should not occur");
+            fail("An exception should not have been thrown");
         }
 
         try {
@@ -36,7 +36,7 @@ public class ColumnTest {
                              }},
                              1);
         } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("This exception should not occur");
+            fail("An exception should not have been thrown");
         }
 
         try {
@@ -47,7 +47,7 @@ public class ColumnTest {
                              new HashSet<>(),
                              2);
         } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("This exception should not occur");
+            fail("An exception should not have been thrown");
         }
 
         try {
@@ -62,7 +62,7 @@ public class ColumnTest {
                              }},
                              3);
         } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("This exception should not occur");
+            fail("An exception should not have been thrown");
         }
 
         try {
@@ -73,7 +73,7 @@ public class ColumnTest {
                              new HashSet<>(),
                              4);
         } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("This exception should not occur");
+            fail("An exception should not have been thrown");
         }
     }
 
@@ -84,7 +84,7 @@ public class ColumnTest {
         try {
             columnSuccess = new Column("My Column");
         } catch (EmptyColumnNameException e) {
-            fail("This exception should not occur");
+            fail("An exception should not have been thrown");
         }
 
         assertNotNull(columnSuccess);
@@ -94,9 +94,9 @@ public class ColumnTest {
 
         try {
             Column columnFailEmptyName = new Column("");
-            fail("This should throw an exception");
+            fail("An exception should have been thrown");
         } catch (EmptyColumnNameException e) {
-            // This exception should occur
+            // This exception should have been thrown
         }
     }
 
@@ -104,9 +104,8 @@ public class ColumnTest {
     public void addCardOnceTest() {
         column.addCard(card1);
 
-        assertFalse(column.getCards().isEmpty());
         assertEquals(1, column.getCards().size());
-        assertEquals(card1, column.getCards().get(0));
+        assertEquals(card1, column.getCard(0));
 
         assertEquals(column, card1.getContainingColumn());
     }
@@ -115,28 +114,25 @@ public class ColumnTest {
     public void addCardMultipleTest() {
         column.addCard(card1);
 
-        assertFalse(column.getCards().isEmpty());
         assertEquals(1, column.getCards().size());
-        assertEquals(card1, column.getCards().get(0));
+        assertEquals(card1, column.getCard(0));
 
         assertEquals(column, card1.getContainingColumn());
 
         // Add duplicate card, shouldn't do anything
         column.addCard(card1);
 
-        assertFalse(column.getCards().isEmpty());
         assertEquals(1, column.getCards().size());
-        assertEquals(card1, column.getCards().get(0));
+        assertEquals(card1, column.getCard(0));
 
         assertEquals(column, card1.getContainingColumn());
 
         // Add new card
         column.addCard(card2);
 
-        assertFalse(column.getCards().isEmpty());
         assertEquals(2, column.getCards().size());
-        assertEquals(card1, column.getCards().get(0));
-        assertEquals(card2, column.getCards().get(1));
+        assertEquals(card1, column.getCard(0));
+        assertEquals(card2, column.getCard(1));
 
         assertEquals(column, card1.getContainingColumn());
         assertEquals(column, card2.getContainingColumn());
@@ -160,7 +156,6 @@ public class ColumnTest {
         // Remove non-existent card, do nothing
         column.removeCard(card2);
 
-        assertFalse(column.getCards().isEmpty());
         assertEquals(2, column.getCards().size());
 
         assertNull(card2.getContainingColumn());
@@ -168,9 +163,8 @@ public class ColumnTest {
         // Remove existing card
         column.removeCard(card1);
 
-        assertFalse(column.getCards().isEmpty());
         assertEquals(1, column.getCards().size());
-        assertEquals(card3, column.getCards().get(0));
+        assertEquals(card3, column.getCard(0));
 
         assertNull(card1.getContainingColumn());
 
@@ -192,7 +186,6 @@ public class ColumnTest {
         // No keywords, get all results
         List<Card> noKeywords = column.getCardsWithQuery(new HashSet<>());
 
-        assertFalse(noKeywords.isEmpty());
         assertEquals(4, noKeywords.size());
 
         // Keyword matches none
@@ -208,7 +201,6 @@ public class ColumnTest {
             add("keyword2");
         }});
 
-        assertFalse(keywordMatchesSome.isEmpty());
         assertEquals(2, keywordMatchesSome.size());
         assertEquals(card3, keywordMatchesSome.get(0));
         assertEquals(card1, keywordMatchesSome.get(1));
@@ -223,14 +215,12 @@ public class ColumnTest {
 
         List<Card> userStories = column.getCardsOfType(CardType.USER_STORY);
 
-        assertFalse(userStories.isEmpty());
         assertEquals(2, userStories.size());
         assertEquals(card1, userStories.get(0));
         assertEquals(card4, userStories.get(1));
 
         List<Card> tasks = column.getCardsOfType(CardType.TASK);
 
-        assertFalse(tasks.isEmpty());
         assertEquals(1, tasks.size());
         assertEquals(card3, tasks.get(0));
     }

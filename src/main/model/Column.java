@@ -20,7 +20,7 @@ public class Column {
         this.cards = new ArrayList<>();
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, card
     // EFFECTS: adds a card to this column
     public void addCard(Card card) {
         if (cards.contains(card)) {
@@ -31,7 +31,7 @@ public class Column {
         card.setContainingColumn(this);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, card
     // EFFECTS: removes a card from this column
     public void removeCard(Card card) {
         if (!cards.contains(card)) {
@@ -40,6 +40,10 @@ public class Column {
 
         cards.remove(card);
         card.setContainingColumn(null);
+    }
+
+    public Card getCard(int index) {
+        return cards.get(index);
     }
 
     public List<Card> getCards() {

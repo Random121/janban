@@ -8,6 +8,9 @@ import java.util.List;
 // This class represents a kanban board which contains
 // columns that each represent a stage within a workflow.
 public class KanbanBoard {
+    private static final String DEFAULT_BACKLOG_COLUMN_NAME = "Backlog";
+    private static final String DEFAULT_WIP_COLUMN_NAME = "In Progress";
+
     private final List<Column> columns;
     private final String completedColumnName;
 
@@ -21,8 +24,9 @@ public class KanbanBoard {
     public KanbanBoard(String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {
         this.columns = new ArrayList<>();
         this.completedColumnName = completedColumnName;
+        this.completedColumn = null;
 
-        generateDefaultColumns();
+        addDefaultColumns();
     }
 
     // MODIFIES: this
@@ -30,16 +34,18 @@ public class KanbanBoard {
     //          completed column for this board.
     //          throws an EmptyColumnNameException if the complete column name is empty
     //          throws an DuplicateColumnException if the name of the complete column is a duplicate.
-    private void generateDefaultColumns() throws EmptyColumnNameException, DuplicateColumnException {
+    private void addDefaultColumns() throws EmptyColumnNameException, DuplicateColumnException {
         try {
-            Column backlog = new Column("Backlog");
-            Column inProgress = new Column("In Progress");
+            Column backlog = new Column(DEFAULT_BACKLOG_COLUMN_NAME);
+            Column inProgress = new Column(DEFAULT_WIP_COLUMN_NAME);
 
             addColumn(backlog);
             addColumn(inProgress);
         } catch (EmptyColumnNameException | DuplicateColumnException e) {
-            // These two errors should never occur
-            throw new RuntimeException(e);
+            // These two errors should never occur unless the code
+            // has been messed up. If it does, we throw an error
+            // since there is no way to recover from it.
+            throw new Error(e);
         }
 
         Column completed = new Column(completedColumnName);
@@ -76,7 +82,7 @@ public class KanbanBoard {
         columns.remove(column);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, column
     // EFFECTS: edits the name of an existing column
     public void editColumnName(Column column,
                                String newName) throws DuplicateColumnException, EmptyColumnNameException {
@@ -88,11 +94,27 @@ public class KanbanBoard {
             throw new DuplicateColumnException("Column with name '" + newName + "' already exists");
         }
 
+        if (column == completedColumn) {
+            completedColumn = null;
+        }
+
+        if (newName.equals(completedColumnName)) {
+            completedColumn = column;
+        }
+
         column.setName(newName);
+    }
+
+    public Column getColumn(int index) {
+        return columns.get(index);
     }
 
     public List<Column> getColumns() {
         return columns;
+    }
+
+    public int getColumnCount() {
+        return columns.size();
     }
 
     // EFFECTS: get the column which holds completed cards
@@ -102,7 +124,7 @@ public class KanbanBoard {
         return completedColumn;
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, newColumn
     // EFFECTS: moves a card to a different column
     //          and removes it from its old column if it has one
     public void moveCard(Card card, Column newColumn) {
