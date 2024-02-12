@@ -162,7 +162,7 @@ public class JanbanConsoleApp implements RunnableApp {
             Column column = columns.get(index);
             List<Card> cards = column.getCards();
 
-            System.out.println("(" + index + ") " + column.getName() + (column == completedColumn ? " ✅" : ""));
+            System.out.println("(" + index + ") " + column.getName() + (column == completedColumn ? " [✔]" : ""));
 
             if (!cards.isEmpty()) {
                 displayColumnCards(cards);

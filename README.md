@@ -33,7 +33,7 @@ As a user, I want to be able to...
 - add a card to a column and specify its title, description, assignee, type, story points, and tags
 - view all the cards within a column
 - edit the title, description, assignee, type, story points, and tags of a card
-- filter cards within all columns based on keywords and/or type
 - move a card to a different column
+- filter cards within all columns based on keywords or type
 - remove a card from a column
 - view basic statistics about the board like the number of cards and story points
