@@ -251,7 +251,7 @@ public class ColumnTest {
     @Test
     public void setNameEmptyTest() {
         try {
-            column.setName("New Name");
+            column.setName("");
             fail("An exception should have been thrown");
         } catch (EmptyColumnNameException e) {
             // This exception should have been thrown
