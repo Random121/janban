@@ -77,6 +77,7 @@ public class Card {
         return title;
     }
 
+    // MODIFIES: this
     // EFFECTS: sets the title of the current card.
     //          throws an EmptyCardTitleException if the title is empty.
     public void setTitle(String title) throws EmptyCardTitleException {
@@ -120,6 +121,7 @@ public class Card {
         return storyPoints;
     }
 
+    // MODIFIES: this
     // EFFECTS: sets the story point estimate for this card.
     //          throws NegativeStoryPointsException if the story point amount is negative.
     public void setStoryPoints(int storyPoints) throws NegativeStoryPointsException {

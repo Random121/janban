@@ -3,6 +3,8 @@ package ui;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+// This class contains helper methods used for printing to the console
+// or taking user inputs.
 public class ConsoleHelper {
     private static final Scanner scanner;
 

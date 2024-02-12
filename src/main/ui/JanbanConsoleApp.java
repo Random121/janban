@@ -7,6 +7,7 @@ import java.util.*;
 
 // This class represents the console user interface for the Janban app.
 // Contains all the logic for processing and displaying the app.
+// The way the code is structured is inspired by TellerApp.
 public class JanbanConsoleApp implements RunnableApp {
     private final ArrayList<Project> projects;
     private Project currentProject;

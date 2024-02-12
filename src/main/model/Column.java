@@ -98,6 +98,7 @@ public class Column {
         return name;
     }
 
+    // MODIFIES: this
     // EFFECTS: sets the name of this column.
     //          throws an EmptyColumnNameException if the column name is empty.
     public void setName(String name) throws EmptyColumnNameException {
