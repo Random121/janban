@@ -35,18 +35,13 @@ public class KanbanBoard {
     //          throws an EmptyColumnNameException if the complete column name is empty
     //          throws an DuplicateColumnException if the name of the complete column is a duplicate.
     private void addDefaultColumns() throws EmptyColumnNameException, DuplicateColumnException {
-        try {
-            Column backlog = new Column(DEFAULT_BACKLOG_COLUMN_NAME);
-            Column inProgress = new Column(DEFAULT_WIP_COLUMN_NAME);
+        Column backlog = new Column(DEFAULT_BACKLOG_COLUMN_NAME);
+        Column inProgress = new Column(DEFAULT_WIP_COLUMN_NAME);
 
-            addColumn(backlog);
-            addColumn(inProgress);
-        } catch (EmptyColumnNameException | DuplicateColumnException e) {
-            // These two errors should never occur unless the code
-            // has been messed up. If it does, we throw an error
-            // since there is no way to recover from it.
-            throw new Error(e);
-        }
+        // These two methods should never throw an exception unless the code
+        // has been messed up.
+        addColumn(backlog);
+        addColumn(inProgress);
 
         Column completed = new Column(completedColumnName);
 

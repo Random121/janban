@@ -6,14 +6,14 @@ public enum CardType {
     TASK("Task"),
     ISSUE("Issue");
 
-    private final String stringRepr;
+    private final String readableValue;
 
-    CardType(String stringRepr) {
-        this.stringRepr = stringRepr;
+    CardType(String readableValue) {
+        this.readableValue = readableValue;
     }
 
     @Override
     public String toString() {
-        return this.stringRepr;
+        return this.readableValue;
     }
 }

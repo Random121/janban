@@ -12,8 +12,14 @@ public class JanbanConsoleApp implements RunnableApp {
     private Project currentProject;
     private KanbanBoard currentKanbanBoard;
 
+    // This is used by utility methods in the class
+    // for displaying better looking menus
+    private final Deque<String> menuEnds;
+
+    // EFFECTS: constructs a new console app for Janban with no projects
     public JanbanConsoleApp() {
         projects = new ArrayList<>();
+        menuEnds = new ArrayDeque<>();
     }
 
     // EFFECTS: runs the Janban console app, starting
@@ -31,18 +37,11 @@ public class JanbanConsoleApp implements RunnableApp {
         System.out.println("===================================");
     }
 
-    public void initTesting() {
-        try {
-            projects.add(new Project("Test Project", "This is a test description", "Done"));
-        } catch (DuplicateColumnException | EmptyColumnNameException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     //
     // Project menu section
     //
 
+    // EFFECTS: displays the projects menu and takes input for the menu commands
     private void launchProjectsMenu() {
         do {
             displayCreatedProjects();
@@ -50,6 +49,7 @@ public class JanbanConsoleApp implements RunnableApp {
         } while (processProjectsMenuInput());
     }
 
+    // EFFECTS: displays all the created projects for the console app
     private void displayCreatedProjects() {
         displayMenuStart("Created Projects");
 
@@ -68,6 +68,7 @@ public class JanbanConsoleApp implements RunnableApp {
         displayMenuEnd(false);
     }
 
+    // EFFECTS: displays the commands available on the projects menu
     private void displayProjectMenuOptions() {
         ConsoleHelper.newLine();
         System.out.println("Project Commands:");
@@ -99,6 +100,9 @@ public class JanbanConsoleApp implements RunnableApp {
         return true;
     }
 
+    // MODIFIES: this
+    // EFFECTS: displays the menu which adds new projects and
+    //          adds a new project based on the user input
     private void launchNewProjectWizard() {
         displayMenuStart("New Project Wizard");
 
@@ -128,6 +132,10 @@ public class JanbanConsoleApp implements RunnableApp {
     // Kanban board menu section
     //
 
+    // MODIFIES: this
+    // EFFECTS: lets the user select a created project, displays
+    //          the kanban board, the kanban board menu options,
+    //          and takes in user input
     private void launchKanbanBoardMenu() {
         int projectIndex = ConsoleHelper.takeIntInput("Enter the index of the project: ");
 
@@ -147,6 +155,7 @@ public class JanbanConsoleApp implements RunnableApp {
         } while (processKanbanBoardMenuInput());
     }
 
+    // EFFECTS: displays the currently selected kanban board
     private void displayKanbanBoard(KanbanBoard board) {
         displayMenuStart("Kanban Board for Project '" + currentProject.getName() + "'");
 
@@ -155,6 +164,7 @@ public class JanbanConsoleApp implements RunnableApp {
         displayMenuEnd(false);
     }
 
+    // EFFECTS: displays the columns within a kanban board
     private void displayColumns(List<Column> columns, Column completedColumn) {
         for (int index = 0; index < columns.size(); index++) {
             ConsoleHelper.newLine();
@@ -172,6 +182,8 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // EFFECTS: displays the columns within a kanban board but with the cards
+    //          filtered by keywords
     private void displayColumns(List<Column> columns, Set<String> keywords) {
         for (int index = 0; index < columns.size(); index++) {
             ConsoleHelper.newLine();
@@ -189,6 +201,8 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // EFFECTS: displays the columns within a kanban board but with the cards
+    //          filtered by type
     private void displayColumns(List<Column> columns, CardType type) {
         for (int index = 0; index < columns.size(); index++) {
             ConsoleHelper.newLine();
@@ -206,13 +220,14 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // EFFECTS: displays the cards within a column
     private void displayColumnCards(List<Card> cards) {
         for (int index = 0; index < cards.size(); index++) {
             Card card = cards.get(index);
             Set<String> cardTags = card.getTags();
 
             System.out.println("\t- (" + index + ") " + card.getTitle());
-            System.out.println("\t\t- Type: " + card.getType());
+            System.out.println("\t\t- Type: " + card.getType().toString());
             System.out.println("\t\t- Story points: " + card.getStoryPoints());
             System.out.println("\t\t- Assignee: " + card.getAssignee());
             System.out.println("\t\t- Tags: " + String.join(", ", cardTags));
@@ -220,6 +235,7 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // EFFECTS: display the options available for the kanban board menu
     private void displayKanbanBoardMenuOptions() {
         ConsoleHelper.newLine();
         System.out.println("Kanban Board Commands:");
@@ -263,12 +279,14 @@ public class JanbanConsoleApp implements RunnableApp {
     // Column menu section
     //
 
+    // EFFECTS: displays the column action menu and takes in user input
     private void launchColumnActionMenu() {
         do {
             displayColumnActionMenuOptions();
         } while (processColumnActionMenuInput());
     }
 
+    // EFFECTS: displays the options available on the column action menu
     private void displayColumnActionMenuOptions() {
         ConsoleHelper.newLine();
         System.out.println("Column Commands:");
@@ -304,6 +322,9 @@ public class JanbanConsoleApp implements RunnableApp {
         return true;
     }
 
+    // MODIFIES: this
+    // EFFECTS: launches the menu for adding a new column and also adds
+    //          a new column to the current kanban board based on user input
     private void launchNewColumnWizard() {
         displayMenuStart("New Column Wizard");
 
@@ -327,6 +348,9 @@ public class JanbanConsoleApp implements RunnableApp {
         displayMenuEnd(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: launches the menu for editing a column and also edits the
+    //          column based on user input
     private void launchEditColumnWizard() {
         displayMenuStart("Edit Column Wizard");
 
@@ -354,6 +378,9 @@ public class JanbanConsoleApp implements RunnableApp {
         displayMenuEnd(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: launches the menu for deleting a column and also deletes the
+    //          column from the current kanban board based on user input
     private void launchDeleteColumnWizard() {
         displayMenuStart("Delete Column Wizard");
 
@@ -379,12 +406,14 @@ public class JanbanConsoleApp implements RunnableApp {
     // Card menu section
     //
 
+    // EFFECTS: displays the card action menu and takes in user input
     private void launchCardActionMenu() {
         do {
             displayCardActionMenuOptions();
         } while (processCardActionMenuInput());
     }
 
+    // EFFECTS: displays the options available for the card action menu
     private void displayCardActionMenuOptions() {
         ConsoleHelper.newLine();
         System.out.println("Card Commands:");
@@ -420,11 +449,12 @@ public class JanbanConsoleApp implements RunnableApp {
         return true;
     }
 
+    // EFFECTS: displays the menu for adding a new card
     private void launchNewCardWizard() {
         displayMenuStart("New Card Wizard");
 
         if (!currentKanbanBoard.getColumns().isEmpty()) {
-            processAddNewCard();
+            doAddNewCard();
             System.out.println("Added a new card");
         } else {
             System.out.println("Cannot create a card when there are no columns");
@@ -433,7 +463,9 @@ public class JanbanConsoleApp implements RunnableApp {
         displayMenuEnd(true);
     }
 
-    private void processAddNewCard() {
+    // MODIFIES: this
+    // EFFECTS: adds a new card to the kanban board based on user inputs
+    private void doAddNewCard() {
         String title = ConsoleHelper.takeStringInput("Enter a title: ");
         String description = ConsoleHelper.takeStringInput("Enter a description: ");
         String assignee = ConsoleHelper.takeStringInput("Enter an assignee: ");
@@ -463,6 +495,8 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: launches the menu for editing a card within the kanban board
     private void launchEditCardWizard() {
         displayMenuStart("Edit Card Wizard");
 
@@ -490,18 +524,21 @@ public class JanbanConsoleApp implements RunnableApp {
 
         ConsoleHelper.newLine();
 
-        processEditCard(card);
+        doEditCard(card);
 
         displayMenuEnd(true);
     }
 
-    private void processEditCard(Card card) {
+    // EFFECTS: edits a card within the kanban board
+    private void doEditCard(Card card) {
         editCardStringOptions(card);
         editCardType(card);
         editStoryPoints(card);
         editCardColumn(card);
     }
 
+    // MODIFIES: card
+    // EFFECTS: edits the string properties of specified card based on user inputs
     private void editCardStringOptions(Card card) {
         String title = ConsoleHelper.takeStringInput("Enter a new title (put nothing to skip): ");
 
@@ -532,6 +569,8 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // MODIFIES: card
+    // EFFECTS: edits the type of the card based on user inputs
     private void editCardType(Card card) {
         String typeString = ConsoleHelper.takeStringInput(
                 "Enter a new type (story/task/issue) (put nothing to skip): ");
@@ -548,6 +587,8 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // MODIFIES: card
+    // EFFECTS: edits the story points of the card based on user inputs
     private void editStoryPoints(Card card) {
         int storyPoints = ConsoleHelper.takeIntInput("Enter the number of story points (enter -1 to skip): ");
 
@@ -560,6 +601,8 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // MODIFIES: card
+    // EFFECTS: edits the parent column of the card based on user inputs
     private void editCardColumn(Card card) {
         int columnIndex = ConsoleHelper.takeIntInput(
                 "Enter the index of the new parent column (enter -1 to skip): ");
@@ -578,6 +621,8 @@ public class JanbanConsoleApp implements RunnableApp {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: deletes the card specified by user inputs from the current kanban board
     private void launchDeleteCardWizard() {
         displayMenuStart("Delete Column Wizard");
 
@@ -610,6 +655,147 @@ public class JanbanConsoleApp implements RunnableApp {
         System.out.println("Deleted the card '" + card.getTitle() + "'");
 
         displayMenuEnd(true);
+    }
+
+    //
+    // Filtering menu section
+    //
+
+    // EFFECTS: launches the menu for filtering cards
+    private void launchFilteringMenu() {
+        displayFilteringMenuOptions();
+        processFilteringMenuInput();
+    }
+
+    // EFFECTS: displays the options available for the filtering menu
+    private void displayFilteringMenuOptions() {
+        ConsoleHelper.newLine();
+        System.out.println("Filtering Commands:");
+        System.out.println("\t's' -> Search for cards (case insensitive)");
+        System.out.println("\t't' -> Filter cards of a certain type");
+        ConsoleHelper.newLine();
+    }
+
+    // EFFECTS: takes and processes the input for the filtering menu
+    private void processFilteringMenuInput() {
+        String command = ConsoleHelper.takeStringInput("Please enter a command: ").toLowerCase();
+
+        switch (command) {
+            case "s":
+                launchCardSearch();
+                break;
+            case "t":
+                launchCardTypeFilter();
+                break;
+            default:
+                displayUnknownCommandError();
+                break;
+        }
+    }
+
+    // EFFECTS: launches the menu for searching cards by keywords: takes in a user input of keywords
+    //          and displays the results
+    private void launchCardSearch() {
+        ConsoleHelper.newLine();
+
+        String keywordString = ConsoleHelper.takeStringInput("Enter some comma separated keywords: ");
+        Set<String> keywords = parseKeywordsFromString(keywordString);
+
+        displayMenuStart("Search Results for '" + String.join(", ", keywords) + "'");
+
+        displayColumns(currentKanbanBoard.getColumns(), keywords);
+
+        displayMenuEnd(true);
+    }
+
+    // EFFECTS: launches the menu for searching cards by type: takes in a user input of a type
+    //          and displays the results
+    private void launchCardTypeFilter() {
+        ConsoleHelper.newLine();
+
+        String typeString = ConsoleHelper.takeStringInput("Enter a card type (story/task/issue): ");
+        CardType type = parseTypeFromString(typeString);
+
+        displayMenuStart("Search Results for Card Type '" + type + "'");
+
+        displayColumns(currentKanbanBoard.getColumns(), type);
+
+        displayMenuEnd(true);
+    }
+
+    //
+    // Stats menu section
+    //
+
+    // EFFECTS: displays statistics about the story points and card count for the
+    //          current kanban board
+    private void displayKanbanBoardStats() {
+        ConsoleHelper.newLine();
+
+        int totalCardCount = currentKanbanBoard.getCardCount(true);
+        int inProgressCardCount = currentKanbanBoard.getCardCount(false);
+        int completedCardCount = totalCardCount - inProgressCardCount;
+
+        System.out.println("Total cards: " + totalCardCount);
+        System.out.println("\t- In progress: " + inProgressCardCount);
+        System.out.println("\t- Completed: " + completedCardCount);
+
+        int totalStoryPoints = currentKanbanBoard.getTotalStoryPoints();
+        int completedStoryPoints = currentKanbanBoard.getCompletedStoryPoints();
+        int inProgressStoryPoints = totalStoryPoints - completedStoryPoints;
+
+        System.out.println("Story points: " + totalStoryPoints);
+        System.out.println("\t- In progress: " + inProgressStoryPoints);
+        System.out.println("\t- Completed: " + completedStoryPoints);
+
+        ConsoleHelper.newLine();
+
+        ConsoleHelper.pause();
+    }
+
+    //
+    // Utilities
+    //
+
+    // MODIFIES: this
+    // EFFECTS: displays a simply title for a menu
+    // EXAMPLE:
+    // ===============
+    // This is a title
+    // ---------------
+    private void displayMenuStart(String title) {
+        int titleLength = title.length();
+
+        ConsoleHelper.newLine();
+        System.out.println("=".repeat(titleLength));
+        System.out.println(title);
+        System.out.println("-".repeat(titleLength));
+
+        menuEnds.push("=".repeat(titleLength));
+    }
+
+    // MODIFIES: this
+    // EFFECTS: displays a corresponding ending delimiter for a menu
+    // EXAMPLE:
+    // ===============
+    private void displayMenuEnd(boolean pause) {
+        ConsoleHelper.newLine();
+        System.out.println(menuEnds.pop());
+
+        if (pause) {
+            ConsoleHelper.pause();
+        }
+    }
+
+    // EFFECTS: displays an error for an unknown command
+    private void displayUnknownCommandError() {
+        System.out.println("Unknown command");
+        ConsoleHelper.tryAgain();
+    }
+
+    // EFFECTS: returns whether the index is within the valid range of the list
+    private boolean validIndex(List<?> list, int index) {
+        return index >= 0 && index < list.size();
     }
 
     // EFFECTS: parses a string of comma separated keywords
@@ -645,136 +831,5 @@ public class JanbanConsoleApp implements RunnableApp {
         }
 
         return null;
-    }
-
-    //
-    // Filtering menu section
-    //
-
-    private void launchFilteringMenu() {
-        displayFilteringMenuOptions();
-        processFilteringMenuInput();
-    }
-
-    private void displayFilteringMenuOptions() {
-        ConsoleHelper.newLine();
-        System.out.println("Filtering Commands:");
-        System.out.println("\t's' -> Search for cards (case insensitive)");
-        System.out.println("\t't' -> Filter cards of a certain type");
-        ConsoleHelper.newLine();
-    }
-
-    private void processFilteringMenuInput() {
-        String command = ConsoleHelper.takeStringInput("Please enter a command: ").toLowerCase();
-
-        switch (command) {
-            case "s":
-                launchCardSearch();
-                break;
-            case "t":
-                launchCardTypeFilter();
-                break;
-            default:
-                displayUnknownCommandError();
-                break;
-        }
-    }
-
-    private void launchCardSearch() {
-        ConsoleHelper.newLine();
-
-        String keywordString = ConsoleHelper.takeStringInput("Enter some comma separated keywords: ");
-        Set<String> keywords = parseKeywordsFromString(keywordString);
-
-        displayMenuStart("Search Results for '" + String.join(", ", keywords) + "'");
-
-        displayColumns(currentKanbanBoard.getColumns(), keywords);
-
-        displayMenuEnd(true);
-    }
-
-    private void launchCardTypeFilter() {
-        ConsoleHelper.newLine();
-
-        String typeString = ConsoleHelper.takeStringInput("Enter a card type (story/task/issue): ");
-        CardType type = parseTypeFromString(typeString);
-
-        displayMenuStart("Search Results for Card Type '" + type + "'");
-
-        displayColumns(currentKanbanBoard.getColumns(), type);
-
-        displayMenuEnd(true);
-    }
-
-    //
-    // Stats menu section
-    //
-
-    private void displayKanbanBoardStats() {
-        ConsoleHelper.newLine();
-
-        int totalCardCount = currentKanbanBoard.getCardCount(true);
-        int inProgressCardCount = currentKanbanBoard.getCardCount(false);
-        int completedCardCount = totalCardCount - inProgressCardCount;
-
-        System.out.println("Total cards: " + totalCardCount);
-        System.out.println("\t- In progress: " + inProgressCardCount);
-        System.out.println("\t- Completed: " + completedCardCount);
-
-        int totalStoryPoints = currentKanbanBoard.getTotalStoryPoints();
-        int completedStoryPoints = currentKanbanBoard.getCompletedStoryPoints();
-        int inProgressStoryPoints = totalStoryPoints - completedStoryPoints;
-
-        System.out.println("Story points: " + totalStoryPoints);
-        System.out.println("\t- In progress: " + inProgressStoryPoints);
-        System.out.println("\t- Completed: " + completedStoryPoints);
-
-        ConsoleHelper.newLine();
-
-        ConsoleHelper.pause();
-    }
-
-    //
-    // Utilities
-    //
-
-    private final Deque<String> sectionEnds = new ArrayDeque<>();
-
-    // EFFECTS: displays a simply title for a menu
-    // EXAMPLE:
-    // ===============
-    // This is a title
-    // ---------------
-    private void displayMenuStart(String title) {
-        int titleLength = title.length();
-
-        ConsoleHelper.newLine();
-        System.out.println("=".repeat(titleLength));
-        System.out.println(title);
-        System.out.println("-".repeat(titleLength));
-
-        sectionEnds.push("=".repeat(titleLength));
-    }
-
-    // EFFECTS: displays a corresponding ending delimiter for a menu
-    // EXAMPLE:
-    // ===============
-    private void displayMenuEnd(boolean pause) {
-        ConsoleHelper.newLine();
-        System.out.println(sectionEnds.pop());
-
-        if (pause) {
-            ConsoleHelper.pause();
-        }
-    }
-
-    // EFFECTS: displays an error for an unknown command
-    private void displayUnknownCommandError() {
-        System.out.println("Unknown command");
-        ConsoleHelper.tryAgain();
-    }
-
-    private boolean validIndex(List<?> list, int index) {
-        return index >= 0 && index < list.size();
     }
 }

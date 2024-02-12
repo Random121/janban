@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ColumnTest {
     private Column column;
@@ -17,6 +18,21 @@ public class ColumnTest {
     private Card card2;
     private Card card3;
     private Card card4;
+
+    private Card makeCard(String title,
+                          String description,
+                          String assignee,
+                          CardType type,
+                          Set<String> tags,
+                          int storyPoints) {
+        try {
+            return new Card(title, description, assignee, type, tags, storyPoints);
+        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+            fail("An exception should not have been thrown");
+        }
+
+        return null;
+    }
 
     @BeforeEach
     public void setup() {
@@ -26,55 +42,39 @@ public class ColumnTest {
             fail("An exception should not have been thrown");
         }
 
-        try {
-            card1 = new Card("Card 1 (keyword1, keyword2)",
-                             "Description 1 keyword2",
-                             "Assignee 1",
-                             CardType.USER_STORY,
-                             new HashSet<>() {{
-                                 add("keyword2");
-                             }},
-                             1);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("An exception should not have been thrown");
-        }
+        card1 = makeCard("Card 1 (keyword1, keyword2)",
+                         "Description 1 keyword2",
+                         "Assignee 1",
+                         CardType.USER_STORY,
+                         new HashSet<>() {{
+                             add("keyword2");
+                         }},
+                         1);
 
-        try {
-            card2 = new Card("Card 2",
-                             "Description 2.",
-                             "Assignee 2",
-                             CardType.ISSUE,
-                             new HashSet<>(),
-                             2);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("An exception should not have been thrown");
-        }
+        card2 = makeCard("Card 2",
+                         "Description 2.",
+                         "Assignee 2",
+                         CardType.ISSUE,
+                         new HashSet<>(),
+                         2);
 
-        try {
-            card3 = new Card("Card 3 (keyword1, keyword2)",
-                             "Description 3 keyword1 keyword2",
-                             "Assignee 3 keyword1",
-                             CardType.TASK,
-                             new HashSet<>() {{
-                                 add("keyword1");
-                                 add("keyword2");
-                                 add("other_tag");
-                             }},
-                             3);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("An exception should not have been thrown");
-        }
+        card3 = makeCard("Card 3 (keyword1, keyword2)",
+                         "Description 3 keyword1 keyword2",
+                         "Assignee 3 keyword1",
+                         CardType.TASK,
+                         new HashSet<>() {{
+                             add("keyword1");
+                             add("keyword2");
+                             add("other_tag");
+                         }},
+                         3);
 
-        try {
-            card4 = new Card("Card 4",
-                             "Description 4",
-                             "Assignee 4",
-                             CardType.USER_STORY,
-                             new HashSet<>(),
-                             4);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("An exception should not have been thrown");
-        }
+        card4 = makeCard("Card 4",
+                         "Description 4",
+                         "Assignee 4",
+                         CardType.USER_STORY,
+                         new HashSet<>(),
+                         4);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ColumnTest {
         assertTrue(columnSuccess.getCards().isEmpty());
 
         try {
-            Column columnFailEmptyName = new Column("");
+            new Column("");
             fail("An exception should have been thrown");
         } catch (EmptyColumnNameException e) {
             // This exception should have been thrown
@@ -235,5 +235,26 @@ public class ColumnTest {
         column.addCard(card4);
 
         assertEquals(10, column.getTotalStoryPoints());
+    }
+
+    @Test
+    public void setNameSuccessTest() {
+        try {
+            column.setName("New Name");
+        } catch (EmptyColumnNameException e) {
+            fail("An exception should not have been thrown");
+        }
+
+        assertEquals("New Name", column.getName());
+    }
+
+    @Test
+    public void setNameEmptyTest() {
+        try {
+            column.setName("New Name");
+            fail("An exception should have been thrown");
+        } catch (EmptyColumnNameException e) {
+            // This exception should have been thrown
+        }
     }
 }
