@@ -42,10 +42,6 @@ public class Column {
         card.setContainingColumn(null);
     }
 
-    public Card getCard(int index) {
-        return cards.get(index);
-    }
-
     public List<Card> getCards() {
         return cards;
     }

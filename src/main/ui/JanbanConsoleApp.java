@@ -109,7 +109,8 @@ public class JanbanConsoleApp implements RunnableApp {
 
         String name = ConsoleHelper.takeStringInput("Enter a project name: ");
         String description = ConsoleHelper.takeStringInput("Enter a project description: ");
-        String completedColumnName = ConsoleHelper.takeStringInput("Enter the done column name (default: 'Done'): ");
+        String completedColumnName = ConsoleHelper.takeStringInput(
+                "Enter the completed column name (default: 'Done'): ");
 
         completedColumnName = completedColumnName.isBlank() ? "Done" : completedColumnName;
 

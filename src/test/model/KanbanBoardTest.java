@@ -23,31 +23,6 @@ public class KanbanBoardTest {
     private Card card3;
     private Card card4;
 
-    private Column makeColumn(String name) {
-        try {
-            return new Column(name);
-        } catch (EmptyColumnNameException e) {
-            fail("An exception should not have been thrown");
-        }
-
-        return null;
-    }
-
-    private Card makeCard(String title,
-                          String description,
-                          String assignee,
-                          CardType type,
-                          Set<String> tags,
-                          int storyPoints) {
-        try {
-            return new Card(title, description, assignee, type, tags, storyPoints);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("An exception should not have been thrown");
-        }
-
-        return null;
-    }
-
     @BeforeEach
     public void setup() {
         try {
@@ -207,6 +182,9 @@ public class KanbanBoardTest {
             fail("An exception should not have been thrown");
         }
 
+        assertTrue(board.getColumns().contains(column1));
+        assertTrue(board.getColumns().contains(column2));
+
         // Normal removal
         board.removeColumn(column1);
 
@@ -241,6 +219,9 @@ public class KanbanBoardTest {
         } catch (DuplicateColumnException e) {
             fail("An exception should not have been thrown");
         }
+
+        assertTrue(board.getColumns().contains(column1));
+        assertTrue(board.getColumns().contains(column2));
 
         Column firstColumn = board.getColumn(0);
         board.removeColumn(firstColumn);
@@ -351,6 +332,9 @@ public class KanbanBoardTest {
         board.getColumn(0).addCard(card1);
         board.getColumn(1).addCard(card2);
 
+        assertTrue(board.getColumn(0).getCards().contains(card1));
+        assertTrue(board.getColumn(1).getCards().contains(card2));
+
         // Normal move
         board.moveCard(card1, board.getColumn(1));
 
@@ -371,6 +355,8 @@ public class KanbanBoardTest {
         } catch (DuplicateColumnException e) {
             fail("An exception should not have been thrown");
         }
+
+        assertTrue(board.getColumns().contains(column1));
 
         // No cards
         assertEquals(0, board.getTotalStoryPoints());
@@ -426,5 +412,30 @@ public class KanbanBoardTest {
 
         assertEquals(3, board.getCardCount(true));
         assertEquals(3, board.getCardCount(false));
+    }
+
+    private Column makeColumn(String name) {
+        try {
+            return new Column(name);
+        } catch (EmptyColumnNameException e) {
+            fail("An exception should not have been thrown");
+        }
+
+        return null;
+    }
+
+    private Card makeCard(String title,
+                          String description,
+                          String assignee,
+                          CardType type,
+                          Set<String> tags,
+                          int storyPoints) {
+        try {
+            return new Card(title, description, assignee, type, tags, storyPoints);
+        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+            fail("An exception should not have been thrown");
+        }
+
+        return null;
     }
 }

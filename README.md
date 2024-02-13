@@ -20,9 +20,9 @@ which allows people to use a kanban board fully offline and is also fully custom
 ## Usage Tips
 
 ### Console App
-- When you create a new project, you have to specify the `done column name`
+- When you create a new project, you have to specify the `completed column name`
   - This is the name of the column which holds cards you have completed
-  - Any new column with this name will also become the done column
+  - Any new column with this name will also become the completed column
 - The column marked with a `[D]` is the completed/done column
   - Cards which are done should be moved to this column if you want the kanban board statistics to work properly
 - The first column of the kanban board is designated as the backlog

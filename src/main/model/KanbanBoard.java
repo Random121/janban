@@ -17,8 +17,8 @@ public class KanbanBoard {
     // This should be updated every time a column is added or removed
     private Column completedColumn;
 
-    // EFFECTS: constructs a KanbanBoard with three default columns (backlog, in progress, and complete),
-    //          and sets the name of the compelte column to what is specified.
+    // EFFECTS: constructs a KanbanBoard with three default columns (backlog, in progress, and completed),
+    //          and sets the name of the completed column to what is specified.
     //          throws a DuplicateColumnException if the complete column name is a duplicate.
     //          throws a EmptyColumnNameException if no complete column name is provided.
     public KanbanBoard(String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {

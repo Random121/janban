@@ -19,21 +19,6 @@ public class ColumnTest {
     private Card card3;
     private Card card4;
 
-    private Card makeCard(String title,
-                          String description,
-                          String assignee,
-                          CardType type,
-                          Set<String> tags,
-                          int storyPoints) {
-        try {
-            return new Card(title, description, assignee, type, tags, storyPoints);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
-            fail("An exception should not have been thrown");
-        }
-
-        return null;
-    }
-
     @BeforeEach
     public void setup() {
         try {
@@ -108,7 +93,7 @@ public class ColumnTest {
         column.addCard(card1);
 
         assertEquals(1, column.getCards().size());
-        assertEquals(card1, column.getCard(0));
+        assertTrue(column.getCards().contains(card1));
 
         assertEquals(column, card1.getContainingColumn());
     }
@@ -118,7 +103,7 @@ public class ColumnTest {
         column.addCard(card1);
 
         assertEquals(1, column.getCards().size());
-        assertEquals(card1, column.getCard(0));
+        assertTrue(column.getCards().contains(card1));
 
         assertEquals(column, card1.getContainingColumn());
 
@@ -126,7 +111,7 @@ public class ColumnTest {
         column.addCard(card1);
 
         assertEquals(1, column.getCards().size());
-        assertEquals(card1, column.getCard(0));
+        assertTrue(column.getCards().contains(card1));
 
         assertEquals(column, card1.getContainingColumn());
 
@@ -134,19 +119,21 @@ public class ColumnTest {
         column.addCard(card2);
 
         assertEquals(2, column.getCards().size());
-        assertEquals(card1, column.getCard(0));
-        assertEquals(card2, column.getCard(1));
+        assertTrue(column.getCards().contains(card2));
 
-        assertEquals(column, card1.getContainingColumn());
         assertEquals(column, card2.getContainingColumn());
     }
 
     @Test
     public void testRemoveCardOnce() {
         column.addCard(card1);
+
+        assertTrue(column.getCards().contains(card1));
+
         column.removeCard(card1);
 
         assertTrue(column.getCards().isEmpty());
+        assertFalse(column.getCards().contains(card1));
 
         assertNull(card1.getContainingColumn());
     }
@@ -156,10 +143,17 @@ public class ColumnTest {
         column.addCard(card1);
         column.addCard(card3);
 
+        assertTrue(column.getCards().contains(card1));
+        assertTrue(column.getCards().contains(card3));
+
         // Remove non-existent card, do nothing
         column.removeCard(card2);
 
         assertEquals(2, column.getCards().size());
+        assertFalse(column.getCards().contains(card2));
+
+        assertTrue(column.getCards().contains(card1));
+        assertTrue(column.getCards().contains(card3));
 
         assertNull(card2.getContainingColumn());
 
@@ -167,7 +161,8 @@ public class ColumnTest {
         column.removeCard(card1);
 
         assertEquals(1, column.getCards().size());
-        assertEquals(card3, column.getCard(0));
+        assertFalse(column.getCards().contains(card1));
+        assertTrue(column.getCards().contains(card3));
 
         assertNull(card1.getContainingColumn());
 
@@ -175,16 +170,15 @@ public class ColumnTest {
         column.removeCard(card3);
 
         assertTrue(column.getCards().isEmpty());
+        assertFalse(column.getCards().contains(card1));
+        assertFalse(column.getCards().contains(card3));
 
         assertNull(card3.getContainingColumn());
     }
 
     @Test
     public void testGetCardsWithQuery() {
-        column.addCard(card1);
-        column.addCard(card2);
-        column.addCard(card3);
-        column.addCard(card4);
+        addAllCards();
 
         // No keywords, get all results
         List<Card> noKeywords = column.getCardsWithQuery(new HashSet<>());
@@ -211,10 +205,7 @@ public class ColumnTest {
 
     @Test
     public void testGetCardsOfType() {
-        column.addCard(card1);
-        column.addCard(card2);
-        column.addCard(card3);
-        column.addCard(card4);
+        addAllCards();
 
         List<Card> userStories = column.getCardsOfType(CardType.USER_STORY);
 
@@ -232,10 +223,7 @@ public class ColumnTest {
     public void testGetTotalStoryPoints() {
         assertEquals(0, column.getTotalStoryPoints());
 
-        column.addCard(card1);
-        column.addCard(card2);
-        column.addCard(card3);
-        column.addCard(card4);
+        addAllCards();
 
         assertEquals(10, column.getTotalStoryPoints());
     }
@@ -259,5 +247,32 @@ public class ColumnTest {
         } catch (EmptyColumnNameException e) {
             // This exception should have been thrown
         }
+    }
+
+    private Card makeCard(String title,
+                          String description,
+                          String assignee,
+                          CardType type,
+                          Set<String> tags,
+                          int storyPoints) {
+        try {
+            return new Card(title, description, assignee, type, tags, storyPoints);
+        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+            fail("An exception should not have been thrown");
+        }
+
+        return null;
+    }
+
+    private void addAllCards() {
+        column.addCard(card1);
+        column.addCard(card2);
+        column.addCard(card3);
+        column.addCard(card4);
+
+        assertTrue(column.getCards().contains(card1));
+        assertTrue(column.getCards().contains(card2));
+        assertTrue(column.getCards().contains(card3));
+        assertTrue(column.getCards().contains(card4));
     }
 }
