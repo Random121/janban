@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class ProjectTest {
     @Test
-    public void testConstructor() {
+    public void testConstructorNoException() {
         Project project = null;
 
         try {
@@ -27,7 +27,7 @@ public class ProjectTest {
     }
 
     @Test
-    public void testConstructorDuplicateColumn() {
+    public void testConstructorDuplicateColumnException() {
         try {
             new Project("My Project",
                         "This is my project",
@@ -41,7 +41,7 @@ public class ProjectTest {
     }
 
     @Test
-    public void testConstructorEmptyColumnName() {
+    public void testConstructorEmptyColumnNameException() {
         try {
             new Project("My Project",
                         "This is my project",

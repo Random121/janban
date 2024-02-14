@@ -31,17 +31,17 @@ public class KanbanBoardTest {
             fail("An exception should not have been thrown");
         }
 
-        column1 = makeColumn("Column 1");
-        column2 = makeColumn("Column 2");
+        column1 = makeColumnOrFail("Column 1");
+        column2 = makeColumnOrFail("Column 2");
 
-        card1 = makeCard("Card 1", "Description 1", "Person 1", CardType.ISSUE, new HashSet<>(), 1);
-        card2 = makeCard("Card 2", "Description 2", "Person 2", CardType.TASK, new HashSet<>(), 2);
-        card3 = makeCard("Card 3", "Description 3", "Person 3", CardType.ISSUE, new HashSet<>(), 3);
-        card4 = makeCard("Card 4", "Description 4", "Person 4", CardType.TASK, new HashSet<>(), 4);
+        card1 = makeCardOrFail("Card 1", "Description 1", "Person 1", CardType.ISSUE, new HashSet<>(), 1);
+        card2 = makeCardOrFail("Card 2", "Description 2", "Person 2", CardType.TASK, new HashSet<>(), 2);
+        card3 = makeCardOrFail("Card 3", "Description 3", "Person 3", CardType.ISSUE, new HashSet<>(), 3);
+        card4 = makeCardOrFail("Card 4", "Description 4", "Person 4", CardType.TASK, new HashSet<>(), 4);
     }
 
     @Test
-    public void testConstructorSuccess() {
+    public void testConstructorNoException() {
         KanbanBoard board = null;
 
         try {
@@ -63,7 +63,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testConstructorDuplicateColumnName() {
+    public void testConstructorExpectDuplicateColumnNameException() {
         try {
             new KanbanBoard("Backlog");
             fail("An exception should have been thrown");
@@ -75,7 +75,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testConstructorEmptyColumnName() {
+    public void testConstructorExpectEmptyColumnNameException() {
         try {
             new KanbanBoard("");
             fail("An exception should have been thrown");
@@ -87,7 +87,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testAddColumnOnce() {
+    public void testAddColumnOnceNoException() {
         // Normal add
         try {
             board.addColumn(column1);
@@ -102,7 +102,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testAddColumnOnceDuplicate() {
+    public void testAddColumnOnceExpectDuplicateColumnNameException() {
         Column duplicateColumn = null;
 
         try {
@@ -117,10 +117,12 @@ public class KanbanBoardTest {
         } catch (DuplicateColumnException e) {
             // This exception should have been thrown
         }
+
+        assertFalse(board.getColumns().contains(duplicateColumn));
     }
 
     @Test
-    public void testAddColumnOnceCompleted() {
+    public void testAddColumnOnceCompletedNoException() {
         Column oldCompletedColumn = board.getCompletedColumn();
 
         board.removeColumn(oldCompletedColumn);
@@ -246,7 +248,7 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testEditColumnName() {
+    public void testEditColumnNameNoException() {
         // Normal edit
         Column secondColumn = board.getColumn(1);
 
@@ -272,35 +274,39 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testEditColumnNameDuplicate() {
-        Column secondColumn = board.getColumn(1);
+    public void testEditColumnNameExpectDuplicateColumnNameException() {
+        Column firstColumn = board.getColumn(0);
 
         try {
-            board.editColumnName(secondColumn, COMPLETED_COLUMN_NAME);
+            board.editColumnName(firstColumn, COMPLETED_COLUMN_NAME);
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
             // This exception should have been thrown
         } catch (EmptyColumnNameException e) {
             fail("Wrong exception thrown");
         }
+
+        assertEquals("Backlog", firstColumn.getName());
     }
 
     @Test
-    public void testEditColumnNameEmpty() {
-        Column secondColumn = board.getColumn(1);
+    public void testEditColumnNameExpectEmptyColumnNameException() {
+        Column firstColumn = board.getColumn(0);
 
         try {
-            board.editColumnName(secondColumn, "");
+            board.editColumnName(firstColumn, "");
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
             fail("Wrong exception thrown");
         } catch (EmptyColumnNameException e) {
             // This exception should have been thrown
         }
+
+        assertEquals("Backlog", firstColumn.getName());
     }
 
     @Test
-    public void testEditColumnNameCompleted() {
+    public void testEditColumnNameCompletedNoException() {
         // Column is a completed column, becomes not completed
         Column oldCompletedColumn = board.getCompletedColumn();
 
@@ -414,7 +420,7 @@ public class KanbanBoardTest {
         assertEquals(3, board.getCardCount(false));
     }
 
-    private Column makeColumn(String name) {
+    private Column makeColumnOrFail(String name) {
         try {
             return new Column(name);
         } catch (EmptyColumnNameException e) {
@@ -424,12 +430,12 @@ public class KanbanBoardTest {
         return null;
     }
 
-    private Card makeCard(String title,
-                          String description,
-                          String assignee,
-                          CardType type,
-                          Set<String> tags,
-                          int storyPoints) {
+    private Card makeCardOrFail(String title,
+                                String description,
+                                String assignee,
+                                CardType type,
+                                Set<String> tags,
+                                int storyPoints) {
         try {
             return new Card(title, description, assignee, type, tags, storyPoints);
         } catch (NegativeStoryPointsException | EmptyCardTitleException e) {

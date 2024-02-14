@@ -22,64 +22,64 @@ public class ColumnTest {
     @BeforeEach
     public void setup() {
         try {
-            column = new Column("Backlog");
+            column = new Column("Column 1");
         } catch (EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
 
-        card1 = makeCard("Card 1 (keyword1, keyword2)",
-                         "Description 1 keyword2",
-                         "Assignee 1",
-                         CardType.USER_STORY,
-                         new HashSet<>() {{
-                             add("keyword2");
-                         }},
-                         1);
+        card1 = makeCardOrFail("Card 1 (keyword1, keyword2)",
+                               "Description 1 keyword2",
+                               "Assignee 1",
+                               CardType.USER_STORY,
+                               new HashSet<>() {{
+                                   add("keyword2");
+                               }},
+                               1);
 
-        card2 = makeCard("Card 2",
-                         "Description 2.",
-                         "Assignee 2",
-                         CardType.ISSUE,
-                         new HashSet<>(),
-                         2);
+        card2 = makeCardOrFail("Card 2",
+                               "Description 2.",
+                               "Assignee 2",
+                               CardType.ISSUE,
+                               new HashSet<>(),
+                               2);
 
-        card3 = makeCard("Card 3 (keyword1, keyword2)",
-                         "Description 3 keyword1 keyword2",
-                         "Assignee 3 keyword1",
-                         CardType.TASK,
-                         new HashSet<>() {{
-                             add("keyword1");
-                             add("keyword2");
-                             add("other_tag");
-                         }},
-                         3);
+        card3 = makeCardOrFail("Card 3 (keyword1, keyword2)",
+                               "Description 3 keyword1 keyword2",
+                               "Assignee 3 keyword1",
+                               CardType.TASK,
+                               new HashSet<>() {{
+                                   add("keyword1");
+                                   add("keyword2");
+                                   add("other_tag");
+                               }},
+                               3);
 
-        card4 = makeCard("Card 4",
-                         "Description 4",
-                         "Assignee 4",
-                         CardType.USER_STORY,
-                         new HashSet<>(),
-                         4);
+        card4 = makeCardOrFail("Card 4",
+                               "Description 4",
+                               "Assignee 4",
+                               CardType.USER_STORY,
+                               new HashSet<>(),
+                               4);
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructorNoException() {
         Column column = null;
 
         try {
-            column = new Column("My Column");
+            column = new Column("Column 1");
         } catch (EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
 
         assertNotNull(column);
-        assertEquals("My Column", column.getName());
+        assertEquals("Column 1", column.getName());
         assertNotNull(column.getCards());
         assertTrue(column.getCards().isEmpty());
     }
 
     @Test
-    public void testConstructorEmptyColumnName() {
+    public void testConstructorExpectEmptyNameException() {
         try {
             new Column("");
             fail("An exception should have been thrown");
@@ -229,7 +229,7 @@ public class ColumnTest {
     }
 
     @Test
-    public void testSetName() {
+    public void testSetNameNoException() {
         try {
             column.setName("New Name");
         } catch (EmptyColumnNameException e) {
@@ -240,21 +240,23 @@ public class ColumnTest {
     }
 
     @Test
-    public void testSetNameEmpty() {
+    public void testSetNameExpectEmptyNameException() {
         try {
             column.setName("");
             fail("An exception should have been thrown");
         } catch (EmptyColumnNameException e) {
             // This exception should have been thrown
         }
+
+        assertEquals("Column 1", column.getName());
     }
 
-    private Card makeCard(String title,
-                          String description,
-                          String assignee,
-                          CardType type,
-                          Set<String> tags,
-                          int storyPoints) {
+    private Card makeCardOrFail(String title,
+                                String description,
+                                String assignee,
+                                CardType type,
+                                Set<String> tags,
+                                int storyPoints) {
         try {
             return new Card(title, description, assignee, type, tags, storyPoints);
         } catch (NegativeStoryPointsException | EmptyCardTitleException e) {

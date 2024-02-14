@@ -17,17 +17,17 @@ public class CardTest {
     @BeforeEach
     public void setup() {
         tags = new HashSet<>() {{
-            add("fix");
-            add("ui");
-            add("urgent");
-            add("div");
-            add("center");
+            add("keyword1");
+            add("keyword2");
+            add("keyword3");
+            add("keyword4");
+            add("keyword5");
         }};
 
         try {
-            card = new Card("Center a div on the UI",
-                            "This div needs to be centered",
-                            "John Doe",
+            card = new Card("Card 1, keyword1, keyword3",
+                            "Description 1, keyword1",
+                            "Assignee 1",
                             CardType.ISSUE,
                             tags,
                             8);
@@ -37,13 +37,13 @@ public class CardTest {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructorNoException() {
         Card card = null;
 
         try {
-            card = new Card("Center a div on the UI",
-                                   "This div needs to be centered",
-                                   "John Doe",
+            card = new Card("Card 1",
+                                   "Description 1",
+                                   "Assignee 1",
                                    CardType.ISSUE,
                                    tags,
                                    8);
@@ -52,9 +52,9 @@ public class CardTest {
         }
 
         assertNotNull(card);
-        assertEquals("Center a div on the UI", card.getTitle());
-        assertEquals("This div needs to be centered", card.getDescription());
-        assertEquals("John Doe", card.getAssignee());
+        assertEquals("Card 1", card.getTitle());
+        assertEquals("Description 1", card.getDescription());
+        assertEquals("Assignee 1", card.getAssignee());
         assertEquals(CardType.ISSUE, card.getType());
         assertEquals(tags, card.getTags());
         assertEquals(8, card.getStoryPoints());
@@ -62,11 +62,11 @@ public class CardTest {
     }
 
     @Test
-    public void testConstructorEmptyTitle() {
+    public void testConstructorExpectEmptyTitleException() {
         try {
             new Card("",
-                     "This div needs to be centered",
-                     "Jacky Chan",
+                     "Description 1",
+                     "Leo",
                      CardType.USER_STORY,
                      tags,
                      8);
@@ -79,11 +79,11 @@ public class CardTest {
     }
 
     @Test
-    public void testConstructorNegativeStoryPoints() {
+    public void testConstructorExpectNegativeStoryPointsException() {
         try {
-            new Card("This is a title",
-                     "This is a description",
-                     "Jane Doe",
+            new Card("Card 1",
+                     "Description 1",
+                     "Dogyun",
                      CardType.TASK,
                      tags,
                      -1);
@@ -99,7 +99,7 @@ public class CardTest {
     public void testGetQueryRelevancyScoreSingleKeyword() {
         // One keyword that matches the title, description, and tags
         Set<String> singleKeywordMatchAll = new HashSet<>() {{
-            add("center");
+            add("keyword1");
         }};
 
         assertEquals(3, card.getQueryRelevancyScore(singleKeywordMatchAll));
@@ -110,7 +110,7 @@ public class CardTest {
         // One keyword that matches the title, description, and tags but has random case (randomly
         // upper and lower case)
         Set<String> singleKeywordMatchAllRandomCase = new HashSet<>() {{
-            add("CeNTeR");
+            add("KeYwOrD1");
         }};
 
         assertEquals(3, card.getQueryRelevancyScore(singleKeywordMatchAllRandomCase));
@@ -120,7 +120,7 @@ public class CardTest {
     public void testGetQueryRelevancyScoreMatchNone() {
         // Keyword that matches nothing
         Set<String> singleKeywordMatchNone = new HashSet<>() {{
-            add("left");
+            add("keyword100");
         }};
 
         assertEquals(0, card.getQueryRelevancyScore(singleKeywordMatchNone));
@@ -131,17 +131,17 @@ public class CardTest {
         // Multiple keyword that matches sometimes or not at all
         // some also has random case
         Set<String> multipleKeywords = new HashSet<>() {{
-            add("Right"); // No match
-            add("div"); // Match title, description, tag
-            add("UrGeNt"); // Match tag
-            add("UI"); // Match tag, title
+            add("random_tag"); // No match
+            add("keyword1"); // Match title, description, tag
+            add("keyword5"); // Match tag
+            add("keyword3"); // Match tag, title
         }};
 
         assertEquals(6, card.getQueryRelevancyScore(multipleKeywords));
     }
 
     @Test
-    public void testSetTitle() {
+    public void testSetTitleNoException() {
         try {
             card.setTitle("New Title");
         } catch (EmptyCardTitleException e) {
@@ -152,13 +152,15 @@ public class CardTest {
     }
 
     @Test
-    public void testSetTitleEmpty() {
+    public void testSetTitleExpectEmptyTitleException() {
         try {
             card.setTitle("");
             fail("An exception should have been thrown");
         } catch (EmptyCardTitleException e) {
             // This exception should have been thrown
         }
+
+        assertEquals("Card 1, keyword1, keyword3", card.getTitle());
     }
 
     @Test
@@ -195,7 +197,7 @@ public class CardTest {
     }
 
     @Test
-    public void testSetStoryPoints() {
+    public void testSetStoryPointsNoException() {
         try {
             card.setStoryPoints(50);
         } catch (NegativeStoryPointsException e) {
@@ -206,12 +208,14 @@ public class CardTest {
     }
 
     @Test
-    public void testSetStoryPointsNegative() {
+    public void testSetStoryPointsExpectNegativeStoryPointsException() {
         try {
             card.setStoryPoints(-10);
             fail("An exception should have been thrown");
         } catch (NegativeStoryPointsException e) {
             // This exception should have been thrown
         }
+
+        assertEquals(8, card.getStoryPoints());
     }
 }
