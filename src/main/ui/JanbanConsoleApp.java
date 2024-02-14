@@ -56,9 +56,9 @@ public class JanbanConsoleApp implements RunnableApp {
 
         if (!kanbanBoards.isEmpty()) {
             for (int index = 0; index < kanbanBoards.size(); index++) {
-                ConsoleHelper.newLine();
-
                 KanbanBoard board = kanbanBoards.get(index);
+
+                ConsoleHelper.newLine();
                 System.out.println("(" + index + ") " + board.getName());
                 System.out.println("\t- " + board.getDescription());
             }
@@ -165,18 +165,18 @@ public class JanbanConsoleApp implements RunnableApp {
     // EFFECTS: displays the columns within a kanban board
     private void displayColumns(List<Column> columns, Column completedColumn) {
         for (int index = 0; index < columns.size(); index++) {
-            ConsoleHelper.newLine();
-
             Column column = columns.get(index);
             List<Card> cards = column.getCards();
 
+            ConsoleHelper.newLine();
             System.out.println("(" + index + ") " + column.getName() + (column == completedColumn ? " [D]" : ""));
 
-            if (!cards.isEmpty()) {
-                displayColumnCards(cards);
-            } else {
+            if (cards.isEmpty()) {
                 System.out.println("\t- There are no cards in this column!");
+                continue;
             }
+
+            displayColumnCards(cards);
         }
     }
 
@@ -184,11 +184,10 @@ public class JanbanConsoleApp implements RunnableApp {
     //          filtered by keywords
     private void displayColumns(List<Column> columns, Set<String> keywords) {
         for (int index = 0; index < columns.size(); index++) {
-            ConsoleHelper.newLine();
-
             Column column = columns.get(index);
             List<Card> cards = column.getCardsWithQuery(keywords);
 
+            ConsoleHelper.newLine();
             System.out.println("(" + index + ") " + column.getName());
 
             if (!cards.isEmpty()) {
@@ -203,11 +202,10 @@ public class JanbanConsoleApp implements RunnableApp {
     //          filtered by type
     private void displayColumns(List<Column> columns, CardType type) {
         for (int index = 0; index < columns.size(); index++) {
-            ConsoleHelper.newLine();
-
             Column column = columns.get(index);
             List<Card> cards = column.getCardsOfType(type);
 
+            ConsoleHelper.newLine();
             System.out.println("(" + index + ") " + column.getName());
 
             if (!cards.isEmpty()) {
