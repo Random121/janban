@@ -11,6 +11,8 @@ public class Project {
     private final KanbanBoard kanbanBoard;
 
     // EFFECTS: constructs a new Project with a name, description, and the name of the completed column
+    //          throws a DuplicateColumnException if the completedColumnName is already used
+    //          throws an EmptyColumnNameException if the completedColumnName is empty
     public Project(String name,
                    String description,
                    String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {

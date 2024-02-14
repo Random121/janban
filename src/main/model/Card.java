@@ -23,7 +23,7 @@ public class Card {
     // the card.
     private Column containingColumn;
 
-    // EFFECTS: constructs a new Card with a give title, description,
+    // EFFECTS: constructs a new Card with a given title, description,
     //          assignee, type, tags, story points, and no containing column.
     //          throws an EmptyCardTitleException if the title is empty.
     //          throws an NegativeStoryPointsException if the story point amount is negative.

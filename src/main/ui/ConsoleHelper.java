@@ -8,30 +8,33 @@ import java.util.Scanner;
 public class ConsoleHelper {
     private static final Scanner scanner;
 
+    // EFFECTS: statically initializes the ConsoleHelper with a scanner that
+    //          takes input
     static {
         scanner = new Scanner(System.in);
     }
 
+    // EFFECTS: cannot construct ConsoleHelper since this class is static
     private ConsoleHelper() {
     }
 
-    // EFFECTS: puts a single new line
+    // EFFECTS: puts a single new line in the console
     public static void newLine() {
         newLine(1);
     }
 
-    // EFFECTS: puts the specified number of new lines
+    // EFFECTS: puts the specified number of new lines in the console
     public static void newLine(int count) {
         System.out.print("\n".repeat(count));
     }
 
-    // EFFECTS: gets the input of the user as a string
+    // EFFECTS: gets the input of the user as a string from the console
     public static String takeStringInput(String inputMessage) {
         System.out.print(inputMessage);
         return scanner.nextLine();
     }
 
-    // EFFECTS: gets the input of the user as an integer
+    // EFFECTS: gets the input of the user as an integer from the console
     //          and retry if it fails
     public static int takeIntInput(String inputMessage) {
         int input;

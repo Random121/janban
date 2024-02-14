@@ -17,7 +17,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // for displaying better looking menus
     private final Deque<String> menuEnds;
 
-    // EFFECTS: constructs a new console app for Janban with no projects
+    // EFFECTS: constructs a new console app for Janban with no projects and no menus
     public JanbanConsoleApp() {
         projects = new ArrayList<>();
         menuEnds = new ArrayDeque<>();
@@ -141,7 +141,7 @@ public class JanbanConsoleApp implements RunnableApp {
         int projectIndex = ConsoleHelper.takeIntInput("Enter the index of the project: ");
 
         if (!validIndex(projects, projectIndex)) {
-            System.out.println("Invalid project index");
+            System.out.println("Invalid project selection");
             return;
         }
 
@@ -373,7 +373,7 @@ public class JanbanConsoleApp implements RunnableApp {
                 System.out.println("Failed to edit the column: " + e.getMessage());
             }
         } else {
-            System.out.println("Invalid column index");
+            System.out.println("Invalid column selection");
         }
 
         displayMenuEnd(true);
@@ -397,7 +397,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
             System.out.println("Deleted the column '" + column.getName() + "'.");
         } else {
-            System.out.println("Invalid column index");
+            System.out.println("Invalid column selection");
         }
 
         displayMenuEnd(true);
@@ -505,7 +505,7 @@ public class JanbanConsoleApp implements RunnableApp {
         List<Column> columns = currentKanbanBoard.getColumns();
 
         if (!validIndex(columns, columnIndex)) {
-            System.out.println("Invalid column index");
+            System.out.println("Invalid column selection");
             displayMenuEnd(true);
             return;
         }
@@ -516,7 +516,7 @@ public class JanbanConsoleApp implements RunnableApp {
         List<Card> cards = column.getCards();
 
         if (!validIndex(cards, cardIndex)) {
-            System.out.println("Invalid card index");
+            System.out.println("Invalid card selection");
             displayMenuEnd(true);
             return;
         }
@@ -611,7 +611,7 @@ public class JanbanConsoleApp implements RunnableApp {
             List<Column> columns = currentKanbanBoard.getColumns();
 
             if (!validIndex(columns, columnIndex)) {
-                System.out.println("Ignoring edit: Invalid column index");
+                System.out.println("Ignoring edit: Invalid column selection");
                 return;
             }
 
@@ -630,7 +630,7 @@ public class JanbanConsoleApp implements RunnableApp {
         List<Column> columns = currentKanbanBoard.getColumns();
 
         if (!validIndex(columns, columnIndex)) {
-            System.out.println("Invalid project index");
+            System.out.println("Invalid project selection");
             displayMenuEnd(true);
             return;
         }
@@ -641,7 +641,7 @@ public class JanbanConsoleApp implements RunnableApp {
         List<Card> cards = column.getCards();
 
         if (!validIndex(cards, cardIndex)) {
-            System.out.println("Invalid card index");
+            System.out.println("Invalid card selection");
             displayMenuEnd(true);
             return;
         }
