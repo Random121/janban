@@ -20,7 +20,7 @@ which allows people to use a kanban board fully offline and is also fully custom
 ## Usage Tips
 
 ### Console App
-- When you create a new project, you have to specify the `completed column name`
+- When you create a new kanban board, you have to specify the `completed column name`
   - This is the name of the column which holds cards you have completed
   - Any new column with this name will also become the completed column
 - The column marked with a `[D]` is the completed/done column
@@ -34,9 +34,8 @@ which allows people to use a kanban board fully offline and is also fully custom
 
 As a user, I want to be able to...
 
-- create a project with a name and description and add it to a list of projects
-- view all the projects I have created
-- delete a project I have created
+- create a kanban board with a name and description and add it to a list of kanban boards
+- view all the kanban boards I have created
 - create a column with a name and add it to the list of columns of the kanban board 
 - view all the columns I have created for a kanban board
 - edit the name of a column
@@ -47,4 +46,4 @@ As a user, I want to be able to...
 - move a card to a different column
 - filter cards within all columns based on keywords or type
 - remove a card from a column
-- view basic statistics about the board like the number of cards and story points
+- view basic statistics about the kanban board like the number of cards and story points

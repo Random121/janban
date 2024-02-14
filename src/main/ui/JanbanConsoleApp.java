@@ -7,30 +7,30 @@ import java.util.*;
 
 // This class represents the console user interface for the Janban app.
 // Contains all the logic for processing and displaying the app.
-// The way the code is structured is inspired by TellerApp.
+// The way the code is structured is inspired by TellerApp
+// (https://github.students.cs.ubc.ca/CPSC210/TellerApp).
 public class JanbanConsoleApp implements RunnableApp {
-    private final ArrayList<Project> projects;
-    private Project currentProject;
+    private final List<KanbanBoard> kanbanBoards;
     private KanbanBoard currentKanbanBoard;
 
     // This is used by utility methods in the class
     // for displaying better looking menus
     private final Deque<String> menuEnds;
 
-    // EFFECTS: constructs a new console app for Janban with no projects and no menus
+    // EFFECTS: constructs a new console app for Janban with no kanban boards and no menus
     public JanbanConsoleApp() {
-        projects = new ArrayList<>();
+        kanbanBoards = new ArrayList<>();
         menuEnds = new ArrayDeque<>();
     }
 
     // EFFECTS: runs the Janban console app, starting
-    //          from the projects menu
+    //          from the main menu
     public void run() {
         System.out.println("====================================");
         System.out.println("Janban: A kanban board made in Java!");
         System.out.println("====================================");
 
-        launchProjectsMenu();
+        launchMainMenu();
 
         ConsoleHelper.newLine();
         System.out.println("===================================");
@@ -39,54 +39,54 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     //
-    // Project menu section
+    // Main menu section
     //
 
-    // EFFECTS: displays the projects menu and takes input for the menu commands
-    private void launchProjectsMenu() {
+    // EFFECTS: displays the main menu and takes input for the menu commands
+    private void launchMainMenu() {
         do {
-            displayCreatedProjects();
-            displayProjectMenuOptions();
-        } while (processProjectsMenuInput());
+            displayCreatedKanbanBoards();
+            displayMainMenuOptions();
+        } while (processMainMenuInput());
     }
 
-    // EFFECTS: displays all the created projects for the console app
-    private void displayCreatedProjects() {
-        displayMenuStart("Created Projects");
+    // EFFECTS: displays all the created kanban boards for the console app
+    private void displayCreatedKanbanBoards() {
+        displayMenuStart("Created Kanban Boards");
 
-        if (!projects.isEmpty()) {
-            for (int index = 0; index < projects.size(); index++) {
+        if (!kanbanBoards.isEmpty()) {
+            for (int index = 0; index < kanbanBoards.size(); index++) {
                 ConsoleHelper.newLine();
 
-                Project project = projects.get(index);
-                System.out.println("(" + index + ") " + project.getName());
-                System.out.println("\t- " + project.getDescription());
+                KanbanBoard board = kanbanBoards.get(index);
+                System.out.println("(" + index + ") " + board.getName());
+                System.out.println("\t- " + board.getDescription());
             }
         } else {
-            System.out.println("You haven't created any projects yet!");
+            System.out.println("You haven't created any kanban boards yet!");
         }
 
         displayMenuEnd(false);
     }
 
-    // EFFECTS: displays the commands available on the projects menu
-    private void displayProjectMenuOptions() {
+    // EFFECTS: displays the commands available on the main menu
+    private void displayMainMenuOptions() {
         ConsoleHelper.newLine();
-        System.out.println("Project Commands:");
-        System.out.println("\t'a' -> Add a new project");
-        System.out.println("\t's' -> Select an existing project");
+        System.out.println("Main Menu Commands:");
+        System.out.println("\t'a' -> Add a new kanban board");
+        System.out.println("\t's' -> Select an existing kanban board");
         System.out.println("\t'q' -> Quit the application");
         ConsoleHelper.newLine();
     }
 
-    // EFFECTS: gets and processes user input for the projects menu
+    // EFFECTS: gets and processes user input for the main menu
     //          returns whether the menu should be active
-    private boolean processProjectsMenuInput() {
+    private boolean processMainMenuInput() {
         String command = ConsoleHelper.takeStringInput("Please enter a command: ").toLowerCase();
 
         switch (command) {
             case "a":
-                launchNewProjectWizard();
+                launchNewKanbanBoardWizard();
                 break;
             case "s":
                 launchKanbanBoardMenu();
@@ -102,28 +102,28 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: displays the menu which adds new projects and
-    //          adds a new project based on the user input
-    private void launchNewProjectWizard() {
-        displayMenuStart("New Project Wizard");
+    // EFFECTS: displays the menu which adds new kanban boards and
+    //          adds a new kanban board based on the user input
+    private void launchNewKanbanBoardWizard() {
+        displayMenuStart("New Kanban Board Wizard");
 
-        String name = ConsoleHelper.takeStringInput("Enter a project name: ");
-        String description = ConsoleHelper.takeStringInput("Enter a project description: ");
+        String name = ConsoleHelper.takeStringInput("Enter a name: ");
+        String description = ConsoleHelper.takeStringInput("Enter a description: ");
         String completedColumnName = ConsoleHelper.takeStringInput(
-                "Enter the completed column name (default: 'Done'): ");
+                "Enter a completed column name (default: 'Done'): ");
 
         completedColumnName = completedColumnName.isBlank() ? "Done" : completedColumnName;
 
         ConsoleHelper.newLine();
 
         try {
-            Project newProject = new Project(name, description, completedColumnName);
+            KanbanBoard newBoard = new KanbanBoard(name, description, completedColumnName);
 
-            projects.add(newProject);
+            kanbanBoards.add(newBoard);
 
-            System.out.println("Added a new project: " + name);
+            System.out.println("Added a new kanban board: " + name);
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
-            System.out.println("Failed to add new project: " + e.getMessage());
+            System.out.println("Failed to add new kanban board: " + e.getMessage());
         }
 
         displayMenuEnd(true);
@@ -134,21 +134,18 @@ public class JanbanConsoleApp implements RunnableApp {
     //
 
     // MODIFIES: this
-    // EFFECTS: lets the user select a created project, displays
+    // EFFECTS: lets the user select a created kanban board, displays
     //          the kanban board, the kanban board menu options,
     //          and takes in user input
     private void launchKanbanBoardMenu() {
-        int projectIndex = ConsoleHelper.takeIntInput("Enter the index of the project: ");
+        int boardIndex = ConsoleHelper.takeIntInput("Enter the index of the kanban board: ");
 
-        if (!validIndex(projects, projectIndex)) {
-            System.out.println("Invalid project selection");
+        if (!validIndex(kanbanBoards, boardIndex)) {
+            System.out.println("Invalid kanban board selection");
             return;
         }
 
-        Project selectedProject = projects.get(projectIndex);
-
-        currentProject = selectedProject;
-        currentKanbanBoard = selectedProject.getKanbanBoard();
+        currentKanbanBoard = kanbanBoards.get(boardIndex);
 
         do {
             displayKanbanBoard(currentKanbanBoard);
@@ -158,7 +155,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
     // EFFECTS: displays the currently selected kanban board
     private void displayKanbanBoard(KanbanBoard board) {
-        displayMenuStart("Kanban Board for Project '" + currentProject.getName() + "'");
+        displayMenuStart("Kanban Board with name '" + currentKanbanBoard.getName() + "'");
 
         displayColumns(board.getColumns(), board.getCompletedColumn());
 
@@ -630,7 +627,7 @@ public class JanbanConsoleApp implements RunnableApp {
         List<Column> columns = currentKanbanBoard.getColumns();
 
         if (!validIndex(columns, columnIndex)) {
-            System.out.println("Invalid project selection");
+            System.out.println("Invalid column selection");
             displayMenuEnd(true);
             return;
         }

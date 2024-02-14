@@ -16,8 +16,10 @@ public class KanbanBoardTest {
     private static final String COMPLETED_COLUMN_NAME = "Done";
 
     private KanbanBoard board;
+
     private Column column1;
     private Column column2;
+
     private Card card1;
     private Card card2;
     private Card card3;
@@ -26,7 +28,7 @@ public class KanbanBoardTest {
     @BeforeEach
     public void setup() {
         try {
-            board = new KanbanBoard(COMPLETED_COLUMN_NAME);
+            board = new KanbanBoard("Kanban Board", "Kanban board description", COMPLETED_COLUMN_NAME);
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
@@ -45,27 +47,30 @@ public class KanbanBoardTest {
         KanbanBoard board = null;
 
         try {
-            board = new KanbanBoard(COMPLETED_COLUMN_NAME);
+            board = new KanbanBoard("Kanban Board", "Kanban board description", COMPLETED_COLUMN_NAME);
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
 
         assertNotNull(board);
-        assertNotNull(board.getCompletedColumn());
 
         assertEquals(3, board.getColumns().size());
 
         assertEquals("Backlog", board.getColumn(0).getName());
         assertEquals("In Progress", board.getColumn(1).getName());
+        assertEquals(COMPLETED_COLUMN_NAME, board.getColumn(2).getName());
 
-        assertEquals(COMPLETED_COLUMN_NAME, board.getCompletedColumn().getName());
+        assertNotNull(board.getCompletedColumn());
         assertEquals(board.getColumn(2), board.getCompletedColumn());
+
+        assertEquals("Kanban Board", board.getName());
+        assertEquals("Kanban board description", board.getDescription());
     }
 
     @Test
     public void testConstructorExpectDuplicateColumnNameException() {
         try {
-            new KanbanBoard("Backlog");
+            new KanbanBoard("Kanban Board", "Kanban board description", "Backlog");
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
             // This exception should have been thrown
@@ -77,7 +82,7 @@ public class KanbanBoardTest {
     @Test
     public void testConstructorExpectEmptyColumnNameException() {
         try {
-            new KanbanBoard("");
+            new KanbanBoard("Kanban Board", "Kanban board description", "");
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
             fail("Wrong exception thrown");

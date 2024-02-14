@@ -5,11 +5,14 @@ import model.exceptions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// This class represents a kanban board which contains
+// This class represents a kanban board with a name and description that contains
 // columns that each represent a stage within a workflow.
 public class KanbanBoard {
     private static final String DEFAULT_BACKLOG_COLUMN_NAME = "Backlog";
     private static final String DEFAULT_WIP_COLUMN_NAME = "In Progress";
+
+    private final String name;
+    private final String description;
 
     private final List<Column> columns;
     private final String completedColumnName;
@@ -17,11 +20,17 @@ public class KanbanBoard {
     // This should be updated every time a column is added or removed
     private Column completedColumn;
 
-    // EFFECTS: constructs a KanbanBoard with three default columns (backlog, in progress, and completed),
-    //          and sets the name of the completed column to what is specified.
+    // EFFECTS: constructs a KanbanBoard with a name, description and
+    //          three default columns (backlog, in progress, and completed),
+    //          and sets the name of the completed column to completedColumnName.
     //          throws a DuplicateColumnException if the complete column name is a duplicate.
     //          throws a EmptyColumnNameException if no complete column name is provided.
-    public KanbanBoard(String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {
+    public KanbanBoard(String name,
+                       String description,
+                       String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {
+        this.name = name;
+        this.description = description;
+
         this.columns = new ArrayList<>();
         this.completedColumnName = completedColumnName;
         this.completedColumn = null;
@@ -184,5 +193,13 @@ public class KanbanBoard {
         }
 
         return cardCount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
