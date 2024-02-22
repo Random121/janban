@@ -1,13 +1,16 @@
 package model;
 
 import model.exceptions.EmptyColumnNameException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.JsonSerializable;
 
 import java.util.*;
 
 // This class represents a column within a Kanban Board.
 // It organizes and stores Cards that are under the same stage
 // of a workflow.
-public class Column {
+public class Column implements JsonSerializable {
     private String name;
     private final List<Card> cards;
 
@@ -117,5 +120,25 @@ public class Column {
         if (name.isBlank()) {
             throw new EmptyColumnNameException("Column name must not be empty");
         }
+    }
+
+    // EFFECTS: returns the JSON representation of this column and its cards
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("cards", cardsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns the JSON representation of all cards in this column
+    private JSONArray cardsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Card card : cards) {
+            jsonArray.put(card.toJson());
+        }
+
+        return jsonArray;
     }
 }

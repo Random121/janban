@@ -47,3 +47,11 @@ As a user, I want to be able to...
 - filter cards within all columns based on keywords or type
 - remove a card from a column
 - view basic statistics about the kanban board like the number of cards and story points
+
+
+### Phase 2
+
+As a user, I want to be able to...
+
+- have the option to save all the kanban boards I have created to file when quitting the application
+- have the option to load all the kanban boards I have previously saved when starting the application

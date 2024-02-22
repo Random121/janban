@@ -2,13 +2,15 @@ package model;
 
 import model.exceptions.EmptyCardTitleException;
 import model.exceptions.NegativeStoryPointsException;
+import org.json.JSONObject;
+import persistence.JsonSerializable;
 
 import java.util.Set;
 
 // This class represents the most basic unit of organization
 // within a Kanban Board. It stores information relating to
 // a specific goal/task.
-public class Card {
+public class Card implements JsonSerializable {
     private String title;
     private String description;
 
@@ -147,5 +149,18 @@ public class Card {
         if (storyPoints < 0) {
             throw new NegativeStoryPointsException("Story points must be positive");
         }
+    }
+
+    // EFFECTS: returns the JSON representation of this card
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("title", title);
+        json.put("description", description);
+        json.put("assignee", assignee);
+        json.put("type", type);
+        json.put("tags", tags);
+        json.put("storyPoints", storyPoints);
+        return json;
     }
 }

@@ -1,13 +1,16 @@
 package model;
 
 import model.exceptions.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.JsonSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // This class represents a kanban board with a name and description that contains
 // columns that each represent a stage within a workflow.
-public class KanbanBoard {
+public class KanbanBoard implements JsonSerializable {
     private static final String DEFAULT_BACKLOG_COLUMN_NAME = "Backlog";
     private static final String DEFAULT_WIP_COLUMN_NAME = "In Progress";
 
@@ -20,22 +23,17 @@ public class KanbanBoard {
     // This should be updated every time a column is added or removed
     private Column completedColumn;
 
-    // EFFECTS: constructs a KanbanBoard with a name, description and
-    //          three default columns (backlog, in progress, and completed),
+    // EFFECTS: constructs a KanbanBoard with a name, description, no columns,
     //          and sets the name of the completed column to completedColumnName.
-    //          throws a DuplicateColumnException if the complete column name is a duplicate.
-    //          throws a EmptyColumnNameException if no complete column name is provided.
     public KanbanBoard(String name,
                        String description,
-                       String completedColumnName) throws DuplicateColumnException, EmptyColumnNameException {
+                       String completedColumnName) {
         this.name = name;
         this.description = description;
 
         this.columns = new ArrayList<>();
         this.completedColumnName = completedColumnName;
         this.completedColumn = null;
-
-        addDefaultColumns();
     }
 
     // MODIFIES: this
@@ -43,12 +41,11 @@ public class KanbanBoard {
     //          completed column for this board.
     //          throws an EmptyColumnNameException if the complete column name is empty
     //          throws an DuplicateColumnException if the name of the complete column is a duplicate.
-    private void addDefaultColumns() throws EmptyColumnNameException, DuplicateColumnException {
+    public void addDefaultColumns() throws EmptyColumnNameException, DuplicateColumnException {
         Column backlog = new Column(DEFAULT_BACKLOG_COLUMN_NAME);
         Column inProgress = new Column(DEFAULT_WIP_COLUMN_NAME);
 
-        // These two methods should never throw an exception unless the code
-        // has been messed up.
+        // These two methods should never throw an exception.
         addColumn(backlog);
         addColumn(inProgress);
 
@@ -201,5 +198,27 @@ public class KanbanBoard {
 
     public String getDescription() {
         return description;
+    }
+
+    // EFFECTS: returns the JSON representation of this kanban board and its columns
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("description", description);
+        json.put("completedColumnName", completedColumnName);
+        json.put("columns", columnsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns the JSON representation of the columns in this board
+    private JSONArray columnsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Column column : columns) {
+            jsonArray.put(column.toJson());
+        }
+
+        return jsonArray;
     }
 }

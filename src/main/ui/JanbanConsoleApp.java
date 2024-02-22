@@ -2,7 +2,11 @@ package ui;
 
 import model.*;
 import model.exceptions.*;
+import org.json.JSONException;
+import persistence.KanbanJsonReader;
+import persistence.KanbanJsonWriter;
 
+import java.io.IOException;
 import java.util.*;
 
 // This class represents the console user interface for the Janban app.
@@ -10,16 +14,24 @@ import java.util.*;
 // The way the code is structured is inspired by TellerApp
 // (https://github.students.cs.ubc.ca/CPSC210/TellerApp).
 public class JanbanConsoleApp implements RunnableApp {
-    private final List<KanbanBoard> kanbanBoards;
+    private static final String SAVE_DATA_FILE = "./data/save.json";
+    private final KanbanJsonWriter kanbanJsonWriter;
+    private final KanbanJsonReader kanbanJsonReader;
+
+    private KanbanBoardList kanbanBoards;
     private KanbanBoard currentKanbanBoard;
 
     // This is used by utility methods in the class
     // for displaying better looking menus
     private final Deque<String> menuEnds;
 
-    // EFFECTS: constructs a new console app for Janban with no kanban boards and no menus
+    // EFFECTS: constructs a new console app for Janban with no kanban boards, no menus,
+    //          a json writer, and a json reader
     public JanbanConsoleApp() {
-        kanbanBoards = new ArrayList<>();
+        kanbanJsonWriter = new KanbanJsonWriter(SAVE_DATA_FILE);
+        kanbanJsonReader = new KanbanJsonReader(SAVE_DATA_FILE);
+
+        kanbanBoards = new KanbanBoardList();
         menuEnds = new ArrayDeque<>();
     }
 
@@ -30,12 +42,84 @@ public class JanbanConsoleApp implements RunnableApp {
         System.out.println("Janban: A kanban board made in Java!");
         System.out.println("====================================");
 
+        ConsoleHelper.newLine();
+
+        promptLoadBoards();
+
         launchMainMenu();
+
+        ConsoleHelper.newLine();
+
+        promptSaveBoards();
 
         ConsoleHelper.newLine();
         System.out.println("===================================");
         System.out.println("Exiting... Thanks for using Janban!");
         System.out.println("===================================");
+
+        // Flush the print writer buffer to write save data
+        kanbanJsonWriter.close();
+    }
+
+    // EFFECTS: prompts the user whether they want to load the previously saved boards
+    private void promptLoadBoards() {
+        while (true) {
+            String doLoad = ConsoleHelper.takeStringInput("Would you like to load previously saved boards (y/n)? ")
+                                         .toLowerCase();
+
+            if (doLoad.equals("y")) {
+                try {
+                    kanbanBoards = kanbanJsonReader.read();
+                    System.out.println("Successfully loaded all kanban boards from file!");
+                } catch (IOException | CorruptedSaveDataException | JSONException e) {
+                    ConsoleHelper.newLine();
+                    System.out.println("There was a problem with reading the save file!");
+                    System.out.println("The error message is: " + e.getMessage());
+                    System.out.println("Please ensure that the save file is not corrupted and try again");
+                    ConsoleHelper.newLine();
+
+                    // We want to let the user decide if they want to try and load it again
+                    continue;
+                }
+
+                break;
+            } else if (doLoad.equals("n")) {
+                System.out.println("Skipping loading!");
+                break;
+            } else {
+                displayUnknownCommandError();
+            }
+        }
+    }
+
+    // EFFECTS: prompts the user whether they want to save their current boards
+    private void promptSaveBoards() {
+        while (true) {
+            String doSave = ConsoleHelper.takeStringInput("Would you like to save all your boards (y/n)? ")
+                                         .toLowerCase();
+
+            if (doSave.equals("y")) {
+                try {
+                    kanbanJsonWriter.open();
+                    kanbanJsonWriter.writeBoards(kanbanBoards);
+                    System.out.println("Successfully saved all kanban boards to file!");
+                } catch (IOException e) {
+                    ConsoleHelper.newLine();
+                    System.out.println("There was a problem with writing the save file!");
+                    System.out.println("The error message is: " + e.getMessage());
+                    ConsoleHelper.newLine();
+
+                    continue;
+                }
+
+                break;
+            } else if (doSave.equals("n")) {
+                System.out.println("Skipping saving!");
+                break;
+            } else {
+                displayUnknownCommandError();
+            }
+        }
     }
 
     //
@@ -56,7 +140,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
         if (!kanbanBoards.isEmpty()) {
             for (int index = 0; index < kanbanBoards.size(); index++) {
-                KanbanBoard board = kanbanBoards.get(index);
+                KanbanBoard board = kanbanBoards.getBoard(index);
 
                 ConsoleHelper.newLine();
                 System.out.println("(" + index + ") " + board.getName());
@@ -116,10 +200,11 @@ public class JanbanConsoleApp implements RunnableApp {
 
         ConsoleHelper.newLine();
 
-        try {
-            KanbanBoard newBoard = new KanbanBoard(name, description, completedColumnName);
+        KanbanBoard newBoard = new KanbanBoard(name, description, completedColumnName);
 
-            kanbanBoards.add(newBoard);
+        try {
+            newBoard.addDefaultColumns();
+            kanbanBoards.addBoard(newBoard);
 
             System.out.println("Added a new kanban board: " + name);
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
@@ -140,12 +225,12 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchKanbanBoardMenu() {
         int boardIndex = ConsoleHelper.takeIntInput("Enter the index of the kanban board: ");
 
-        if (!validIndex(kanbanBoards, boardIndex)) {
+        if (!validIndex(kanbanBoards.getBoards(), boardIndex)) {
             System.out.println("Invalid kanban board selection");
             return;
         }
 
-        currentKanbanBoard = kanbanBoards.get(boardIndex);
+        currentKanbanBoard = kanbanBoards.getBoard(boardIndex);
 
         do {
             displayKanbanBoard(currentKanbanBoard);
