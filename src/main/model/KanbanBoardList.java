@@ -10,6 +10,7 @@ import java.util.List;
 public class KanbanBoardList implements JsonSerializable {
     private final List<KanbanBoard> boards;
 
+    // EFFECTS: constructs a new empty list of kanban boards
     public KanbanBoardList() {
         boards = new ArrayList<>();
     }

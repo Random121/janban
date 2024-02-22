@@ -1,0 +1,74 @@
+{"boards": [
+    {
+        "columns": [
+            {
+                "cards": [
+                    {
+                        "storyPoints": -88,
+                        "description": "This is a description for my card 1",
+                        "assignee": "Assignee 1",
+                        "title": "My card 1",
+                        "type": "USER_STORY",
+                        "tags": [
+                            "tag1",
+                            "tag5",
+                            "tag2"
+                        ]
+                    },
+                    {
+                        "storyPoints": 1,
+                        "description": "Description 3",
+                        "assignee": "John Dow",
+                        "title": "My card 3",
+                        "type": "USER_STORY",
+                        "tags": [
+                            "project",
+                            "typescript"
+                        ]
+                    }
+                ],
+                "name": "Backlog"
+            },
+            {
+                "cards": [],
+                "name": "In Progress"
+            },
+            {
+                "cards": [{
+                    "storyPoints": 8,
+                    "description": "This is a description for my card 2",
+                    "assignee": "Assignee 2",
+                    "title": "My card 2",
+                    "type": "TASK",
+                    "tags": [
+                        "tag2",
+                        "tag15"
+                    ]
+                }],
+                "name": "Done"
+            }
+        ],
+        "name": "My Board 1",
+        "description": "My board description 1",
+        "completedColumnName": "Done"
+    },
+    {
+        "columns": [
+            {
+                "cards": [],
+                "name": "Backlog"
+            },
+            {
+                "cards": [],
+                "name": "In Progress"
+            },
+            {
+                "cards": [],
+                "name": "Under review"
+            }
+        ],
+        "name": "My Board 2",
+        "description": "My board description 2",
+        "completedColumnName": "Finished"
+    }
+]}

@@ -56,11 +56,9 @@ public class JanbanConsoleApp implements RunnableApp {
         System.out.println("===================================");
         System.out.println("Exiting... Thanks for using Janban!");
         System.out.println("===================================");
-
-        // Flush the print writer buffer to write save data
-        kanbanJsonWriter.close();
     }
 
+    // MODIFIES: this
     // EFFECTS: prompts the user whether they want to load the previously saved boards
     private void promptLoadBoards() {
         while (true) {
@@ -86,9 +84,9 @@ public class JanbanConsoleApp implements RunnableApp {
             } else if (doLoad.equals("n")) {
                 System.out.println("Skipping loading!");
                 break;
-            } else {
-                displayUnknownCommandError();
             }
+
+            displayUnknownCommandError();
         }
     }
 
@@ -102,10 +100,11 @@ public class JanbanConsoleApp implements RunnableApp {
                 try {
                     kanbanJsonWriter.open();
                     kanbanJsonWriter.writeBoards(kanbanBoards);
+                    kanbanJsonWriter.close();
                     System.out.println("Successfully saved all kanban boards to file!");
                 } catch (IOException e) {
                     ConsoleHelper.newLine();
-                    System.out.println("There was a problem with writing the save file!");
+                    System.out.println("There was a problem with writing to the save file!");
                     System.out.println("The error message is: " + e.getMessage());
                     ConsoleHelper.newLine();
 
@@ -116,9 +115,9 @@ public class JanbanConsoleApp implements RunnableApp {
             } else if (doSave.equals("n")) {
                 System.out.println("Skipping saving!");
                 break;
-            } else {
-                displayUnknownCommandError();
             }
+
+            displayUnknownCommandError();
         }
     }
 

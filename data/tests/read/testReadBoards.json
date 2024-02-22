@@ -1,0 +1,59 @@
+{"boards": [
+    {
+        "columns": [
+            {
+                "cards": [],
+                "name": "Backlog"
+            },
+            {
+                "cards": [],
+                "name": "In Progress"
+            },
+            {
+                "cards": [],
+                "name": "Finished"
+            }
+        ],
+        "name": "Kanban Board 1",
+        "description": "Kanban board description 1",
+        "completedColumnName": "Finished"
+    },
+    {
+        "columns": [
+            {
+                "cards": [
+                    {
+                        "storyPoints": 5,
+                        "description": "My card description",
+                        "assignee": "John Doe and Jane Doe",
+                        "title": "My card",
+                        "type": "ISSUE",
+                        "tags": [
+                            "tag1",
+                            "tag2"
+                        ]
+                    },
+                    {
+                        "storyPoints": 666,
+                        "description": "Another card description",
+                        "assignee": "Jane Doe",
+                        "title": "Another card",
+                        "type": "USER_STORY",
+                        "tags": [
+                            "tag4",
+                            "tag3"
+                        ]
+                    }
+                ],
+                "name": "Column 1"
+            },
+            {
+                "cards": [],
+                "name": "Column 2"
+            }
+        ],
+        "name": "Kanban Board 2",
+        "description": "Kanban board description 2",
+        "completedColumnName": "Completed"
+    }
+]}

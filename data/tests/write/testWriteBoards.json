@@ -1,0 +1,27 @@
+{"boards": [
+    {
+        "columns": [],
+        "name": "Kanban Board 1",
+        "description": "Kanban board description 1",
+        "completedColumnName": "Done"
+    },
+    {
+        "columns": [{
+            "cards": [{
+                "storyPoints": 5,
+                "description": "My card description",
+                "assignee": "John Doe",
+                "title": "My card",
+                "type": "ISSUE",
+                "tags": [
+                    "tag1",
+                    "tag2"
+                ]
+            }],
+            "name": "A column"
+        }],
+        "name": "Kanban Board 2",
+        "description": "Kanban board description 2",
+        "completedColumnName": "Finished"
+    }
+]}

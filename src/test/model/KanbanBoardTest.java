@@ -27,8 +27,10 @@ public class KanbanBoardTest {
 
     @BeforeEach
     public void setup() {
+        board = new KanbanBoard("Kanban Board", "Kanban board description", COMPLETED_COLUMN_NAME);
+
         try {
-            board = new KanbanBoard("Kanban Board", "Kanban board description", COMPLETED_COLUMN_NAME);
+            board.addDefaultColumns();
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
@@ -43,16 +45,25 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testConstructorNoException() {
-        KanbanBoard board = null;
+    public void testConstructor() {
+        KanbanBoard board = new KanbanBoard("Kanban Board", "Kanban board description", COMPLETED_COLUMN_NAME);
+
+        assertEquals("Kanban Board", board.getName());
+        assertEquals("Kanban board description", board.getDescription());
+
+        assertTrue(board.getColumns().isEmpty());
+        assertNull(board.getCompletedColumn());
+    }
+
+    @Test
+    public void testAddDefaultColumnsNoException() {
+        KanbanBoard board = new KanbanBoard("Kanban Board", "Kanban board description", COMPLETED_COLUMN_NAME);
 
         try {
-            board = new KanbanBoard("Kanban Board", "Kanban board description", COMPLETED_COLUMN_NAME);
+            board.addDefaultColumns();
         } catch (DuplicateColumnException | EmptyColumnNameException e) {
             fail("An exception should not have been thrown");
         }
-
-        assertNotNull(board);
 
         assertEquals(3, board.getColumns().size());
 
@@ -62,15 +73,14 @@ public class KanbanBoardTest {
 
         assertNotNull(board.getCompletedColumn());
         assertEquals(board.getColumn(2), board.getCompletedColumn());
-
-        assertEquals("Kanban Board", board.getName());
-        assertEquals("Kanban board description", board.getDescription());
     }
 
     @Test
-    public void testConstructorExpectDuplicateColumnNameException() {
+    public void testAddDefaultColumnsExpectDuplicateColumnNameException() {
+        KanbanBoard board = new KanbanBoard("Kanban Board", "Kanban board description", "Backlog");
+
         try {
-            new KanbanBoard("Kanban Board", "Kanban board description", "Backlog");
+            board.addDefaultColumns();
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
             // This exception should have been thrown
@@ -80,9 +90,11 @@ public class KanbanBoardTest {
     }
 
     @Test
-    public void testConstructorExpectEmptyColumnNameException() {
+    public void testAddDefaultColumnsExpectEmptyColumnNameException() {
+        KanbanBoard board = new KanbanBoard("Kanban Board", "Kanban board description", "");
+
         try {
-            new KanbanBoard("Kanban Board", "Kanban board description", "");
+            board.addDefaultColumns();
             fail("An exception should have been thrown");
         } catch (DuplicateColumnException e) {
             fail("Wrong exception thrown");

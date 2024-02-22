@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 
 // This class represents a writer that saves a list of kanban boards
 // to a local file as JSON.
+// This interface was modeled after the JsonSerializationDemo project
+// (https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo).
 public class KanbanJsonWriter {
     private static final int TAB_WIDTH = 4;
     private PrintWriter writer;
