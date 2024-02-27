@@ -29,9 +29,11 @@ public class ConsoleHelper {
     }
 
     // EFFECTS: gets the input of the user as a string from the console
-    public static String takeStringInput(String inputMessage) {
+    public static String takeStringInput(String inputMessage, boolean toLowerCase) {
         System.out.print(inputMessage);
-        return scanner.nextLine();
+        String input = scanner.nextLine();
+        return toLowerCase ? input.toLowerCase()
+                           : input;
     }
 
     // EFFECTS: gets the input of the user as an integer from the console
@@ -60,16 +62,15 @@ public class ConsoleHelper {
         return input;
     }
 
-    // EFFECTS: displays a message that pauses the console output and asks
-    //          the user to try again
-    public static void tryAgain() {
-        System.out.print("Press enter to try again.");
+    // EFFECTS: pauses the console output with a message
+    public static void pause() {
+        System.out.print("Press enter to continue.");
         scanner.nextLine();
     }
 
-    // EFFECTS: pauses the console output
-    public static void pause() {
-        System.out.print("Press enter to continue.");
+    // EFFECTS: pauses the console output with a specified message
+    public static void pause(String message) {
+        System.out.print(message);
         scanner.nextLine();
     }
 }
