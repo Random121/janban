@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class KanbanJsonReaderTest extends JsonTest {
 
     @Test
-    public void testReadBoardsInvalidFile() {
+    public void testReadBoardsInvalidFileException() {
         final String TEST_FILE = "./data/tests/read/thisFileDoesNotExist.json";
 
         KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
@@ -28,7 +28,7 @@ public class KanbanJsonReaderTest extends JsonTest {
     }
 
     @Test
-    public void testReadBoardsEmpty() {
+    public void testReadBoardsEmptyNoException() {
         final String TEST_FILE = "./data/tests/read/testReadBoardsEmpty.json";
 
         KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
@@ -109,7 +109,7 @@ public class KanbanJsonReaderTest extends JsonTest {
     }
 
     @Test
-    public void testReadBoardsCorruptColumnEmptyName() {
+    public void testReadBoardsCorruptColumnEmptyNameException() {
         final String TEST_FILE = "./data/tests/read/testReadBoardsCorruptColumnEmptyName.json";
 
         KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
@@ -125,7 +125,7 @@ public class KanbanJsonReaderTest extends JsonTest {
     }
 
     @Test
-    public void testReadBoardsCorruptCardNegativeStoryPoints() {
+    public void testReadBoardsCorruptCardNegativeStoryPointsException() {
         final String TEST_FILE = "./data/tests/read/testReadBoardsCorruptCardNegativeStoryPoints.json";
 
         KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
@@ -141,7 +141,7 @@ public class KanbanJsonReaderTest extends JsonTest {
     }
 
     @Test
-    public void testReadBoardsCorruptCardEmptyTitle() {
+    public void testReadBoardsCorruptCardEmptyTitleException() {
         final String TEST_FILE = "./data/tests/read/testReadBoardsCorruptCardEmptyTitle.json";
 
         KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
@@ -157,7 +157,7 @@ public class KanbanJsonReaderTest extends JsonTest {
     }
 
     @Test
-    public void testReadBoardsCorruptBoardDuplicateColumn() {
+    public void testReadBoardsCorruptBoardDuplicateColumnException() {
         final String TEST_FILE = "./data/tests/read/testReadBoardsCorruptBoardDuplicateColumn.json";
 
         KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);

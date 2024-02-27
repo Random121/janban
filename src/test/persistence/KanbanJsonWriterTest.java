@@ -20,7 +20,7 @@ public class KanbanJsonWriterTest extends JsonTest {
     }
 
     @Test
-    public void testOpenInvalidFile() {
+    public void testOpenInvalidFileException() {
         final String TEST_FILE = "./data/tests/write/invalid|file?.json";
 
         KanbanJsonWriter writer = new KanbanJsonWriter(TEST_FILE);
@@ -34,7 +34,7 @@ public class KanbanJsonWriterTest extends JsonTest {
     }
 
     @Test
-    public void testWriteBoardsEmpty() {
+    public void testWriteBoardsEmptyNoException() {
         final String TEST_FILE = "./data/tests/write/testWriteBoardsEmpty.json";
 
         KanbanJsonWriter writer = new KanbanJsonWriter(TEST_FILE);
