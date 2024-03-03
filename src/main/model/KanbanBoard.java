@@ -25,9 +25,7 @@ public class KanbanBoard implements JsonSerializable {
 
     // EFFECTS: constructs a KanbanBoard with a name, description, no columns,
     //          and sets the name of the completed column to completedColumnName.
-    public KanbanBoard(String name,
-                       String description,
-                       String completedColumnName) {
+    public KanbanBoard(String name, String description, String completedColumnName) {
         this.name = name;
         this.description = description;
 
@@ -39,9 +37,8 @@ public class KanbanBoard implements JsonSerializable {
     // MODIFIES: this
     // EFFECTS: generates and adds the default backlog, in progress, and
     //          completed column for this board.
-    //          throws an EmptyColumnNameException if the complete column name is empty
-    //          throws an DuplicateColumnException if the name of the complete column is a duplicate.
-    public void addDefaultColumns() throws EmptyColumnNameException, DuplicateColumnException {
+    //          throws an DuplicateColumnException if there is already a column with the same name.
+    public void addDefaultColumns() throws DuplicateColumnException {
         Column backlog = new Column(DEFAULT_BACKLOG_COLUMN_NAME);
         Column inProgress = new Column(DEFAULT_WIP_COLUMN_NAME);
 
@@ -59,7 +56,7 @@ public class KanbanBoard implements JsonSerializable {
     //          throws an DuplicateColumnException if there is already a column with the same name.
     public void addColumn(Column column) throws DuplicateColumnException {
         if (hasColumnWithName(column.getName())) {
-            throw new DuplicateColumnException("Column with name '" + column.getName() + "' already exists");
+            throw new DuplicateColumnException(column.getName());
         }
 
         if (column.getName().equals(completedColumnName)) {
@@ -84,15 +81,18 @@ public class KanbanBoard implements JsonSerializable {
     }
 
     // MODIFIES: this, column
-    // EFFECTS: edits the name of an existing column
-    public void editColumnName(Column column,
-                               String newName) throws DuplicateColumnException, EmptyColumnNameException {
+    // EFFECTS: edits the name of an existing column.
+    //          throws an DuplicateColumnException if there is already a column with the same name.
+    public void editColumnName(Column column, String newName) throws DuplicateColumnException {
         if (!columns.contains(column)) {
             return;
         }
 
+        // Set new name to default if necessary
+        newName = !newName.isBlank() ? newName : Column.EMPTY_COLUMN_NAME;
+
         if (hasColumnWithName(newName)) {
-            throw new DuplicateColumnException("Column with name '" + newName + "' already exists");
+            throw new DuplicateColumnException(newName);
         }
 
         if (column == completedColumn) {

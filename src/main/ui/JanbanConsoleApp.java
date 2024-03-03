@@ -68,8 +68,8 @@ public class JanbanConsoleApp implements RunnableApp {
         boolean completed = false;
 
         do {
-            String command = ConsoleHelper.takeStringInput("Would you like to load previously saved boards (y/n)? ",
-                                                           true);
+            String command = ConsoleHelper.readString("Would you like to load previously saved boards (y/n)? ",
+                                                      true);
 
             switch (command) {
                 case "y":
@@ -111,8 +111,8 @@ public class JanbanConsoleApp implements RunnableApp {
         boolean completed = false;
 
         do {
-            String command = ConsoleHelper.takeStringInput("Would you like to save all your boards (y/n)? ",
-                                                           true);
+            String command = ConsoleHelper.readString("Would you like to save all your boards (y/n)? ",
+                                                      true);
 
             switch (command) {
                 case "y":
@@ -194,7 +194,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // EFFECTS: gets and processes user input for the main menu
     //          returns whether the menu should be active
     private boolean processMainMenuInput() {
-        String command = ConsoleHelper.takeStringInput("Please enter a command: ", true);
+        String command = ConsoleHelper.readString("Please enter a command: ", true);
 
         switch (command) {
             case "a":
@@ -219,10 +219,10 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchNewKanbanBoardWizard() {
         displayMenuStart("New Kanban Board Wizard");
 
-        String name = ConsoleHelper.takeStringInput("Enter a name: ", false);
-        String description = ConsoleHelper.takeStringInput("Enter a description: ", false);
-        String completedColumnName = ConsoleHelper.takeStringInput("Enter a completed column name (default: 'Done'): ",
-                                                                   false);
+        String name = ConsoleHelper.readString("Enter a name: ", false);
+        String description = ConsoleHelper.readString("Enter a description: ", false);
+        String completedColumnName = ConsoleHelper.readString("Enter a completed column name (default: 'Done'): ",
+                                                              false);
 
         completedColumnName = completedColumnName.isBlank() ? "Done" : completedColumnName;
 
@@ -234,8 +234,8 @@ public class JanbanConsoleApp implements RunnableApp {
             newBoard.addDefaultColumns();
             kanbanBoards.addBoard(newBoard);
 
-            System.out.println("Added a new kanban board: " + name);
-        } catch (DuplicateColumnException | EmptyColumnNameException e) {
+            System.out.println("Added a new kanban board: " + newBoard.getName());
+        } catch (DuplicateColumnException e) {
             System.out.println("Failed to add new kanban board: " + e.getMessage());
         }
 
@@ -251,7 +251,7 @@ public class JanbanConsoleApp implements RunnableApp {
     //          the kanban board, the kanban board menu options,
     //          and takes in user input
     private void launchKanbanBoardMenu() {
-        int boardIndex = ConsoleHelper.takeIntInput("Enter the index of the kanban board: ");
+        int boardIndex = ConsoleHelper.readInteger("Enter the index of the kanban board: ");
 
         if (!validIndex(kanbanBoards.getBoards(), boardIndex)) {
             System.out.println("Invalid kanban board selection");
@@ -268,7 +268,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
     // EFFECTS: displays the currently selected kanban board
     private void displayKanbanBoard(KanbanBoard board) {
-        displayMenuStart("Kanban Board with name '" + currentKanbanBoard.getName() + "'");
+        displayMenuStart("Kanban Board for '" + currentKanbanBoard.getName() + "'");
 
         displayColumns(board.getColumns(), board.getCompletedColumn());
 
@@ -359,7 +359,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // EFFECTS: takes and processes the input for the kanban board action menu.
     //          returns whether the current menu should be active
     private boolean processKanbanBoardMenuInput() {
-        String command = ConsoleHelper.takeStringInput("Please enter a command: ", true);
+        String command = ConsoleHelper.readString("Please enter a command: ", true);
 
         switch (command) {
             case "k":
@@ -409,7 +409,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // EFFECTS: takes and processes the input for the column action menu.
     //          returns whether the current menu should be active
     private boolean processColumnActionMenuInput() {
-        String command = ConsoleHelper.takeStringInput("Please enter a command: ", true);
+        String command = ConsoleHelper.readString("Please enter a command: ", true);
 
         switch (command) {
             case "a":
@@ -437,20 +437,16 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchNewColumnWizard() {
         displayMenuStart("New Column Wizard");
 
-        String name = ConsoleHelper.takeStringInput("Enter a column name: ", false);
+        String name = ConsoleHelper.readString("Enter a column name: ", false);
 
         ConsoleHelper.newLine();
 
-        try {
-            Column newColumn = new Column(name);
+        Column newColumn = new Column(name);
 
-            try {
-                currentKanbanBoard.addColumn(newColumn);
-                System.out.println("Added a new column: " + name);
-            } catch (DuplicateColumnException e) {
-                System.out.println("Failed to add new column: " + e.getMessage());
-            }
-        } catch (EmptyColumnNameException e) {
+        try {
+            currentKanbanBoard.addColumn(newColumn);
+            System.out.println("Added a new column: " + newColumn.getName());
+        } catch (DuplicateColumnException e) {
             System.out.println("Failed to add new column: " + e.getMessage());
         }
 
@@ -463,21 +459,21 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchEditColumnWizard() {
         displayMenuStart("Edit Column Wizard");
 
-        int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
+        int columnIndex = ConsoleHelper.readInteger("Enter the index of the column: ");
         List<Column> columns = currentKanbanBoard.getColumns();
 
         if (validIndex(columns, columnIndex)) {
             Column column = columns.get(columnIndex);
 
-            String newName = ConsoleHelper.takeStringInput("Enter a new name for the column: ", false);
+            String newName = ConsoleHelper.readString("Enter a new name for the column: ", false);
 
             ConsoleHelper.newLine();
 
             try {
                 currentKanbanBoard.editColumnName(column, newName);
 
-                System.out.println("Edited the column name to '" + newName + "'");
-            } catch (DuplicateColumnException | EmptyColumnNameException e) {
+                System.out.println("Edited the column name to '" + column.getName() + "'");
+            } catch (DuplicateColumnException e) {
                 System.out.println("Failed to edit the column: " + e.getMessage());
             }
         } else {
@@ -493,7 +489,7 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchDeleteColumnWizard() {
         displayMenuStart("Delete Column Wizard");
 
-        int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
+        int columnIndex = ConsoleHelper.readInteger("Enter the index of the column: ");
         List<Column> columns = currentKanbanBoard.getColumns();
 
         if (validIndex(columns, columnIndex)) {
@@ -536,7 +532,7 @@ public class JanbanConsoleApp implements RunnableApp {
     // EFFECTS: takes and processes the input for the card action menu.
     //          returns whether the current menu should be active
     private boolean processCardActionMenuInput() {
-        String command = ConsoleHelper.takeStringInput("Please enter a command: ", true);
+        String command = ConsoleHelper.readString("Please enter a command: ", true);
 
         switch (command) {
             case "a":
@@ -564,7 +560,6 @@ public class JanbanConsoleApp implements RunnableApp {
 
         if (!currentKanbanBoard.getColumns().isEmpty()) {
             doAddNewCard();
-            System.out.println("Added a new card");
         } else {
             System.out.println("Cannot create a card when there are no columns");
         }
@@ -575,12 +570,12 @@ public class JanbanConsoleApp implements RunnableApp {
     // MODIFIES: this
     // EFFECTS: adds a new card to the kanban board based on user inputs
     private void doAddNewCard() {
-        String title = ConsoleHelper.takeStringInput("Enter a title: ", false);
-        String description = ConsoleHelper.takeStringInput("Enter a description (optional): ", false);
-        String assignee = ConsoleHelper.takeStringInput("Enter an assignee (optional): ", false);
-        String typeString = ConsoleHelper.takeStringInput("Enter a type (story/task/issue): ", true);
-        String tags = ConsoleHelper.takeStringInput("Enter some comma separated tags (optional): ", false);
-        int storyPoints = ConsoleHelper.takeIntInput("Enter the number of story points: ");
+        String title = ConsoleHelper.readString("Enter a title: ", false);
+        String description = ConsoleHelper.readString("Enter a description: ", false);
+        String assignee = ConsoleHelper.readString("Enter an assignee: ", false);
+        String typeString = ConsoleHelper.readString("Enter a type (story/task/issue): ", true);
+        String tags = ConsoleHelper.readString("Enter some comma separated tags (optional): ", false);
+        int storyPoints = ConsoleHelper.readInteger("Enter the number of story points: ");
 
         ConsoleHelper.newLine();
 
@@ -596,9 +591,12 @@ public class JanbanConsoleApp implements RunnableApp {
             Column firstColumn = currentKanbanBoard.getColumn(0);
 
             currentKanbanBoard.moveCard(newCard, firstColumn);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+
+            System.out.println("Added a new card: " + newCard.getTitle());
+        } catch (NegativeStoryPointsException e) {
             System.out.println("Failed to create a card: " + e.getMessage());
         }
+
     }
 
     // MODIFIES: this
@@ -606,7 +604,7 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchEditCardWizard() {
         displayMenuStart("Edit Card Wizard");
 
-        int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
+        int columnIndex = ConsoleHelper.readInteger("Enter the index of the column: ");
         List<Column> columns = currentKanbanBoard.getColumns();
 
         if (!validIndex(columns, columnIndex)) {
@@ -617,7 +615,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
         Column column = columns.get(columnIndex);
 
-        int cardIndex = ConsoleHelper.takeIntInput("Enter the index of the card: ");
+        int cardIndex = ConsoleHelper.readInteger("Enter the index of the card: ");
         List<Card> cards = column.getCards();
 
         if (!validIndex(cards, cardIndex)) {
@@ -646,29 +644,25 @@ public class JanbanConsoleApp implements RunnableApp {
     // MODIFIES: card
     // EFFECTS: edits the string properties of specified card based on user inputs
     private void editCardStringOptions(Card card) {
-        String title = ConsoleHelper.takeStringInput("Enter a new title (optional): ", false);
+        String title = ConsoleHelper.readString("Enter a new title (optional): ", false);
 
         if (!title.isBlank()) {
-            try {
-                card.setTitle(title);
-            } catch (EmptyCardTitleException e) {
-                System.out.println("Ignoring edit: " + e.getMessage());
-            }
+            card.setTitle(title);
         }
 
-        String description = ConsoleHelper.takeStringInput("Enter a new description (optional): ", false);
+        String description = ConsoleHelper.readString("Enter a new description (optional): ", false);
 
         if (!description.isBlank()) {
             card.setDescription(description);
         }
 
-        String assignee = ConsoleHelper.takeStringInput("Enter a new assignee (optional): ", false);
+        String assignee = ConsoleHelper.readString("Enter a new assignee (optional): ", false);
 
         if (!assignee.isBlank()) {
             card.setAssignee(assignee);
         }
 
-        String tags = ConsoleHelper.takeStringInput("Enter some comma separated tags (optional): ", false);
+        String tags = ConsoleHelper.readString("Enter some comma separated tags (optional): ", false);
 
         if (!tags.isBlank()) {
             card.setTags(parseKeywordsFromString(tags));
@@ -678,51 +672,59 @@ public class JanbanConsoleApp implements RunnableApp {
     // MODIFIES: card
     // EFFECTS: edits the type of the card based on user inputs
     private void editCardType(Card card) {
-        String typeString = ConsoleHelper.takeStringInput("Enter a new type (story/task/issue) (optional): ", true);
+        String typeString = ConsoleHelper.readString("Enter a new type (story/task/issue) (optional): ", true);
 
-        if (!typeString.isBlank()) {
-            CardType type = parseTypeFromString(typeString);
-
-            if (type == null) {
-                System.out.println("Ignoring edit: Card type can only be one of story, task, or issue");
-                return;
-            }
-
-            card.setType(type);
+        if (typeString.isBlank()) {
+            return;
         }
+
+        CardType type = parseTypeFromString(typeString);
+
+        if (type == null) {
+            System.out.println("Failed to edit: Card type can only be one of story, task, or issue");
+            return;
+        }
+
+        card.setType(type);
     }
 
     // MODIFIES: card
     // EFFECTS: edits the story points of the card based on user inputs
     private void editStoryPoints(Card card) {
-        int storyPoints = ConsoleHelper.takeIntInput("Enter the number of story points (enter -1 to skip): ");
+        Optional<Integer> storyPoints = ConsoleHelper.readOptionalInteger(
+                "Enter the number of story points (optional): ");
 
-        if (storyPoints != -1) {
-            try {
-                card.setStoryPoints(storyPoints);
-            } catch (NegativeStoryPointsException e) {
-                System.out.println("Ignoring edit: " + e.getMessage());
-            }
+        if (storyPoints.isEmpty()) {
+            return;
+        }
+
+        try {
+            card.setStoryPoints(storyPoints.get());
+        } catch (NegativeStoryPointsException e) {
+            System.out.println("Failed to edit: " + e.getMessage());
         }
     }
 
     // MODIFIES: card
     // EFFECTS: edits the parent column of the card based on user inputs
     private void editCardColumn(Card card) {
-        int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the new parent column (enter -1 to skip): ");
+        Optional<Integer> columnIndex = ConsoleHelper.readOptionalInteger(
+                "Enter the index of the new parent column (optional): ");
 
-        if (columnIndex != -1) {
-            List<Column> columns = currentKanbanBoard.getColumns();
-
-            if (!validIndex(columns, columnIndex)) {
-                System.out.println("Ignoring edit: Invalid column selection");
-                return;
-            }
-
-            Column newColumn = columns.get(columnIndex);
-
-            currentKanbanBoard.moveCard(card, newColumn);
+        if (columnIndex.isEmpty()) {
+            return;
         }
+
+        List<Column> columns = currentKanbanBoard.getColumns();
+
+        if (!validIndex(columns, columnIndex.get())) {
+            System.out.println("Failed to edit: Invalid column selection");
+            return;
+        }
+
+        Column newColumn = columns.get(columnIndex.get());
+
+        currentKanbanBoard.moveCard(card, newColumn);
     }
 
     // MODIFIES: this
@@ -730,7 +732,7 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchDeleteCardWizard() {
         displayMenuStart("Delete Column Wizard");
 
-        int columnIndex = ConsoleHelper.takeIntInput("Enter the index of the column: ");
+        int columnIndex = ConsoleHelper.readInteger("Enter the index of the column: ");
         List<Column> columns = currentKanbanBoard.getColumns();
 
         if (!validIndex(columns, columnIndex)) {
@@ -741,7 +743,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
         Column column = columns.get(columnIndex);
 
-        int cardIndex = ConsoleHelper.takeIntInput("Enter the index of the card: ");
+        int cardIndex = ConsoleHelper.readInteger("Enter the index of the card: ");
         List<Card> cards = column.getCards();
 
         if (!validIndex(cards, cardIndex)) {
@@ -782,7 +784,7 @@ public class JanbanConsoleApp implements RunnableApp {
 
     // EFFECTS: takes and processes the input for the filtering menu
     private void processFilteringMenuInput() {
-        String command = ConsoleHelper.takeStringInput("Please enter a command: ", true);
+        String command = ConsoleHelper.readString("Please enter a command: ", true);
 
         switch (command) {
             case "s":
@@ -802,7 +804,7 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchCardSearch() {
         ConsoleHelper.newLine();
 
-        String keywordString = ConsoleHelper.takeStringInput("Enter some comma separated keywords: ", false);
+        String keywordString = ConsoleHelper.readString("Enter some comma separated keywords: ", false);
         Set<String> keywords = parseKeywordsFromString(keywordString);
 
         displayMenuStart("Search Results for '" + String.join(", ", keywords) + "'");
@@ -817,7 +819,7 @@ public class JanbanConsoleApp implements RunnableApp {
     private void launchCardTypeFilter() {
         ConsoleHelper.newLine();
 
-        String typeString = ConsoleHelper.takeStringInput("Enter a card type (story/task/issue): ", true);
+        String typeString = ConsoleHelper.readString("Enter a card type (story/task/issue): ", true);
         CardType type = parseTypeFromString(typeString);
 
         displayMenuStart("Search Results for Card Type '" + type + "'");

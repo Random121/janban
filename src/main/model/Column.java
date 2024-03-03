@@ -1,6 +1,5 @@
 package model;
 
-import model.exceptions.EmptyColumnNameException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.JsonSerializable;
@@ -11,15 +10,14 @@ import java.util.*;
 // It organizes and stores Cards that are under the same stage
 // of a workflow.
 public class Column implements JsonSerializable {
+    public static final String EMPTY_COLUMN_NAME = "Untitled column";
+
     private String name;
     private final List<Card> cards;
 
-    // EFFECTS: constructs a new Column with a name and no cards.
-    //          throws an EmptyColumnNameException if the column name is empty.
-    public Column(String name) throws EmptyColumnNameException {
-        assertColumnNameNotEmpty(name);
-
-        this.name = name;
+    // EFFECTS: constructs a new Column with a name (or a default if blank) and no cards
+    public Column(String name) {
+        this.name = !name.isBlank() ? name : EMPTY_COLUMN_NAME;
         this.cards = new ArrayList<>();
     }
 
@@ -98,11 +96,9 @@ public class Column implements JsonSerializable {
     }
 
     // MODIFIES: this
-    // EFFECTS: sets the name of this column.
-    //          throws an EmptyColumnNameException if the column name is empty.
-    public void setName(String name) throws EmptyColumnNameException {
-        assertColumnNameNotEmpty(name);
-        this.name = name;
+    // EFFECTS: sets the name of this column or a default if blank
+    public void setName(String name) {
+        this.name = !name.isBlank() ? name : EMPTY_COLUMN_NAME;
     }
 
     // EFFECTS: gets the total story points of all cards within this column
@@ -114,12 +110,6 @@ public class Column implements JsonSerializable {
         }
 
         return storyPoints;
-    }
-
-    private void assertColumnNameNotEmpty(String name) throws EmptyColumnNameException {
-        if (name.isBlank()) {
-            throw new EmptyColumnNameException("Column name must not be empty");
-        }
     }
 
     // EFFECTS: returns the JSON representation of this column and its cards

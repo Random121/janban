@@ -1,6 +1,7 @@
 package ui;
 
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
 // This class contains helper methods used for printing to the console
@@ -28,38 +29,57 @@ public class ConsoleHelper {
         System.out.print("\n".repeat(count));
     }
 
-    // EFFECTS: gets the input of the user as a string from the console
-    public static String takeStringInput(String inputMessage, boolean toLowerCase) {
+    // EFFECTS: gets a string input from the user in the console
+    public static String readString(String inputMessage, boolean toLowerCase) {
         System.out.print(inputMessage);
+
         String input = scanner.nextLine();
-        return toLowerCase ? input.toLowerCase()
-                           : input;
+
+        return toLowerCase ? input.toLowerCase() : input;
     }
 
-    // EFFECTS: gets the input of the user as an integer from the console
+    // EFFECTS: gets an integer input from the user in the console
     //          and retry if it fails
-    public static int takeIntInput(String inputMessage) {
-        int input;
-
+    public static int readInteger(String inputMessage) {
         while (true) {
-            try {
-                System.out.print(inputMessage);
-                input = scanner.nextInt();
+            System.out.print(inputMessage);
 
-                // Got an input, we can now exit this
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Input is not an integer, please try again");
+            try {
+                int input = scanner.nextInt();
 
                 // Clear the input buffer
                 scanner.nextLine();
+
+                return input;
+            } catch (InputMismatchException e) {
+                System.out.println("Input is not an integer, please try again");
+            }
+
+            // Clear the input buffer
+            scanner.nextLine();
+        }
+    }
+
+    // EFFECTS: gets an optional integer input from the user in the console
+    public static Optional<Integer> readOptionalInteger(String inputMessage) {
+        while (true) {
+            System.out.print(inputMessage);
+
+            String input = scanner.nextLine();
+
+            // User skipping input
+            if (input.isBlank()) {
+                return Optional.empty();
+            }
+
+            try {
+                int intInput = Integer.parseInt(input);
+
+                return Optional.of(intInput);
+            } catch (NumberFormatException e) {
+                System.out.println("Input is not an integer, please try again");
             }
         }
-
-        // Removes the extra new line from the buffer
-        scanner.nextLine();
-
-        return input;
     }
 
     // EFFECTS: pauses the console output with a message

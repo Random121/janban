@@ -1,6 +1,5 @@
 package model;
 
-import model.exceptions.EmptyCardTitleException;
 import model.exceptions.NegativeStoryPointsException;
 import org.json.JSONObject;
 import persistence.JsonSerializable;
@@ -11,9 +10,10 @@ import java.util.Set;
 // within a Kanban Board. It stores information relating to
 // a specific goal/task.
 public class Card implements JsonSerializable {
+    public static final String EMPTY_CARD_TITLE = "Untitled card";
+
     private String title;
     private String description;
-
     private String assignee;
 
     private CardType type;
@@ -25,20 +25,18 @@ public class Card implements JsonSerializable {
     // the card.
     private Column containingColumn;
 
-    // EFFECTS: constructs a new Card with a given title, description,
-    //          assignee, type, tags, story points, and no containing column.
-    //          throws an EmptyCardTitleException if the title is empty.
+    // EFFECTS: constructs a new Card with a given title (or a default if blank),
+    //          description, assignee, type, tags, story points, and no containing column.
     //          throws an NegativeStoryPointsException if the story point amount is negative.
     public Card(String title,
                 String description,
                 String assignee,
                 CardType type,
                 Set<String> tags,
-                int storyPoints) throws NegativeStoryPointsException, EmptyCardTitleException {
-        assertCardTitleNotEmpty(title);
+                int storyPoints) throws NegativeStoryPointsException {
         assertStoryPointsNotNegative(storyPoints);
 
-        this.title = title;
+        this.title = !title.isBlank() ? title : EMPTY_CARD_TITLE;
         this.description = description;
         this.assignee = assignee;
         this.type = type;
@@ -80,11 +78,10 @@ public class Card implements JsonSerializable {
     }
 
     // MODIFIES: this
-    // EFFECTS: sets the title of the current card.
-    //          throws an EmptyCardTitleException if the title is empty.
-    public void setTitle(String title) throws EmptyCardTitleException {
-        assertCardTitleNotEmpty(title);
-        this.title = title;
+    // EFFECTS: sets the title of the current card
+    //          or a default if blank
+    public void setTitle(String title) {
+        this.title = !title.isBlank() ? title : EMPTY_CARD_TITLE;
     }
 
     public String getDescription() {
@@ -139,15 +136,10 @@ public class Card implements JsonSerializable {
         this.containingColumn = containingColumn;
     }
 
-    private void assertCardTitleNotEmpty(String title) throws EmptyCardTitleException {
-        if (title.isBlank()) {
-            throw new EmptyCardTitleException("Card title must not be empty");
-        }
-    }
-
+    // EFFECTS: asserts if the story points is not negative
     private void assertStoryPointsNotNegative(int storyPoints) throws NegativeStoryPointsException {
         if (storyPoints < 0) {
-            throw new NegativeStoryPointsException("Story points must be positive");
+            throw new NegativeStoryPointsException();
         }
     }
 

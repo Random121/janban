@@ -1,7 +1,6 @@
 package model;
 
 import model.exceptions.DuplicateColumnException;
-import model.exceptions.EmptyColumnNameException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ public class KanbanBoardListTest {
 
         try {
             board1.addDefaultColumns();
-        } catch (DuplicateColumnException | EmptyColumnNameException e) {
+        } catch (DuplicateColumnException e) {
             fail("An exception should not have been thrown");
         }
 
@@ -29,7 +28,7 @@ public class KanbanBoardListTest {
 
         try {
             board2.addDefaultColumns();
-        } catch (DuplicateColumnException | EmptyColumnNameException e) {
+        } catch (DuplicateColumnException e) {
             fail("An exception should not have been thrown");
         }
 

@@ -2,7 +2,6 @@ package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import model.exceptions.EmptyCardTitleException;
 import model.exceptions.NegativeStoryPointsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ public class CardTest {
                             CardType.ISSUE,
                             tags,
                             8);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+        } catch (NegativeStoryPointsException e) {
             fail("An exception should not have been thrown");
         }
     }
@@ -42,12 +41,12 @@ public class CardTest {
 
         try {
             card = new Card("Card 1",
-                                   "Description 1",
-                                   "Assignee 1",
-                                   CardType.ISSUE,
-                                   tags,
-                                   8);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+                            "Description 1",
+                            "Assignee 1",
+                            CardType.ISSUE,
+                            tags,
+                            8);
+        } catch (NegativeStoryPointsException e) {
             fail("An exception should not have been thrown");
         }
 
@@ -62,20 +61,22 @@ public class CardTest {
     }
 
     @Test
-    public void testConstructorExpectEmptyTitleException() {
+    public void testConstructorEmptyTitleDefault() {
+        Card card = null;
+
         try {
-            new Card("",
-                     "Description 1",
-                     "Leo",
-                     CardType.USER_STORY,
-                     tags,
-                     8);
-            fail("An exception should have been thrown");
+            card = new Card("",
+                            "Description 1",
+                            "Leo",
+                            CardType.USER_STORY,
+                            tags,
+                            8);
         } catch (NegativeStoryPointsException e) {
-            fail("Wrong exception thrown");
-        } catch (EmptyCardTitleException e) {
-            // This exception should have been thrown
+            fail("An exception should not have been thrown");
         }
+
+        assertNotNull(card);
+        assertEquals(Card.EMPTY_CARD_TITLE, card.getTitle());
     }
 
     @Test
@@ -90,8 +91,6 @@ public class CardTest {
             fail("An exception should have been thrown");
         } catch (NegativeStoryPointsException e) {
             // This exception should have been thrown
-        } catch (EmptyCardTitleException e) {
-            fail("Wrong exception thrown");
         }
     }
 
@@ -141,26 +140,17 @@ public class CardTest {
     }
 
     @Test
-    public void testSetTitleNoException() {
-        try {
-            card.setTitle("New Title");
-        } catch (EmptyCardTitleException e) {
-            fail("An exception should not have been thrown");
-        }
+    public void testSetTitleNotEmpty() {
+        card.setTitle("New Title");
 
         assertEquals("New Title", card.getTitle());
     }
 
     @Test
-    public void testSetTitleExpectEmptyTitleException() {
-        try {
-            card.setTitle("");
-            fail("An exception should have been thrown");
-        } catch (EmptyCardTitleException e) {
-            // This exception should have been thrown
-        }
+    public void testSetTitleEmptyTitleDefault() {
+        card.setTitle("");
 
-        assertEquals("Card 1, keyword1, keyword3", card.getTitle());
+        assertEquals(Card.EMPTY_CARD_TITLE, card.getTitle());
     }
 
     @Test

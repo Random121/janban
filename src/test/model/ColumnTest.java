@@ -2,8 +2,6 @@ package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import model.exceptions.EmptyCardTitleException;
-import model.exceptions.EmptyColumnNameException;
 import model.exceptions.NegativeStoryPointsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +19,7 @@ public class ColumnTest {
 
     @BeforeEach
     public void setup() {
-        try {
-            column = new Column("Column 1");
-        } catch (EmptyColumnNameException e) {
-            fail("An exception should not have been thrown");
-        }
+        column = new Column("Column 1");
 
         card1 = makeCardOrFail("Card 1 (keyword1, keyword2)",
                                "Description 1 keyword2",
@@ -63,14 +57,8 @@ public class ColumnTest {
     }
 
     @Test
-    public void testConstructorNoException() {
-        Column column = null;
-
-        try {
-            column = new Column("Column 1");
-        } catch (EmptyColumnNameException e) {
-            fail("An exception should not have been thrown");
-        }
+    public void testConstructor() {
+        Column column = new Column("Column 1");
 
         assertNotNull(column);
         assertEquals("Column 1", column.getName());
@@ -79,13 +67,10 @@ public class ColumnTest {
     }
 
     @Test
-    public void testConstructorExpectEmptyNameException() {
-        try {
-            new Column("");
-            fail("An exception should have been thrown");
-        } catch (EmptyColumnNameException e) {
-            // This exception should have been thrown
-        }
+    public void testConstructorEmptyNameDefault() {
+        Column column = new Column("");
+
+        assertEquals(Column.EMPTY_COLUMN_NAME, column.getName());
     }
 
     @Test
@@ -229,26 +214,17 @@ public class ColumnTest {
     }
 
     @Test
-    public void testSetNameNoException() {
-        try {
-            column.setName("New Name");
-        } catch (EmptyColumnNameException e) {
-            fail("An exception should not have been thrown");
-        }
+    public void testSetName() {
+        column.setName("New Name");
 
         assertEquals("New Name", column.getName());
     }
 
     @Test
-    public void testSetNameExpectEmptyNameException() {
-        try {
-            column.setName("");
-            fail("An exception should have been thrown");
-        } catch (EmptyColumnNameException e) {
-            // This exception should have been thrown
-        }
+    public void testSetNameEmptyNameDefault() {
+        column.setName("");
 
-        assertEquals("Column 1", column.getName());
+        assertEquals(Column.EMPTY_COLUMN_NAME, column.getName());
     }
 
     private Card makeCardOrFail(String title,
@@ -259,7 +235,7 @@ public class ColumnTest {
                                 int storyPoints) {
         try {
             return new Card(title, description, assignee, type, tags, storyPoints);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+        } catch (NegativeStoryPointsException e) {
             fail("An exception should not have been thrown");
         }
 

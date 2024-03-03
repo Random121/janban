@@ -85,8 +85,7 @@ public class KanbanJsonReaderTest extends JsonTest {
 
             board2.moveCard(card1, column1);
             board2.moveCard(card2, column1);
-        } catch (DuplicateColumnException | EmptyColumnNameException | EmptyCardTitleException |
-                 NegativeStoryPointsException e) {
+        } catch (DuplicateColumnException | NegativeStoryPointsException e) {
             fail("An exception should not have been thrown");
         }
 
@@ -109,40 +108,8 @@ public class KanbanJsonReaderTest extends JsonTest {
     }
 
     @Test
-    public void testReadBoardsCorruptColumnEmptyNameException() {
-        final String TEST_FILE = "./data/tests/read/testReadBoardsCorruptColumnEmptyName.json";
-
-        KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
-
-        try {
-            reader.read();
-            fail("An exception should have been thrown");
-        } catch (IOException e) {
-            fail("Wrong exception thrown");
-        } catch (CorruptedSaveDataException e) {
-            // This exception should have been thrown
-        }
-    }
-
-    @Test
     public void testReadBoardsCorruptCardNegativeStoryPointsException() {
         final String TEST_FILE = "./data/tests/read/testReadBoardsCorruptCardNegativeStoryPoints.json";
-
-        KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
-
-        try {
-            reader.read();
-            fail("An exception should have been thrown");
-        } catch (IOException e) {
-            fail("Wrong exception thrown");
-        } catch (CorruptedSaveDataException e) {
-            // This exception should have been thrown
-        }
-    }
-
-    @Test
-    public void testReadBoardsCorruptCardEmptyTitleException() {
-        final String TEST_FILE = "./data/tests/read/testReadBoardsCorruptCardEmptyTitle.json";
 
         KanbanJsonReader reader = new KanbanJsonReader(TEST_FILE);
 

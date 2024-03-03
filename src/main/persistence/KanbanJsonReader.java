@@ -85,16 +85,9 @@ public class KanbanJsonReader {
     // EFFECTS: reads a single kanban board column from the json
     private Column readColumn(JSONObject json) throws CorruptedSaveDataException {
         String name = json.getString("name");
-
-        Column column;
-
-        try {
-            column = new Column(name);
-        } catch (EmptyColumnNameException e) {
-            throw new CorruptedSaveDataException(e);
-        }
-
         JSONArray jsonCards = json.getJSONArray("cards");
+
+        Column column = new Column(name);
 
         for (Object jsonCard : jsonCards) {
             Card card = readCard((JSONObject) jsonCard);
@@ -116,7 +109,7 @@ public class KanbanJsonReader {
 
         try {
             return new Card(title, description, assignee, type, tags, storyPoints);
-        } catch (NegativeStoryPointsException | EmptyCardTitleException e) {
+        } catch (NegativeStoryPointsException e) {
             throw new CorruptedSaveDataException(e);
         }
     }

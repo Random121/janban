@@ -78,8 +78,7 @@ public class KanbanJsonWriterTest extends JsonTest {
 
             board2.addColumn(column);
             board2.moveCard(card, column);
-        } catch (DuplicateColumnException | EmptyColumnNameException | EmptyCardTitleException |
-                 NegativeStoryPointsException e) {
+        } catch (DuplicateColumnException | NegativeStoryPointsException e) {
             fail("An exception should not have been thrown");
         }
 
