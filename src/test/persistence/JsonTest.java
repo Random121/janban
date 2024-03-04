@@ -12,6 +12,16 @@ public class JsonTest {
         assertEquals(board1.getName(), board2.getName());
         assertEquals(board1.getDescription(), board2.getDescription());
 
+        Column completedColumn1 = board1.getCompletedColumn();
+        Column completedColumn2 = board2.getCompletedColumn();
+
+        if (completedColumn1 == null || completedColumn2 == null) {
+            assertNull(completedColumn1);
+            assertNull(completedColumn2);
+        } else {
+            assertEquals(completedColumn1.getName(), completedColumn2.getName());
+        }
+
         assertEquals(board1.getColumnCount(), board2.getColumnCount());
 
         for (int i = 0; i < board1.getColumnCount(); i++) {
