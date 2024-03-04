@@ -10,14 +10,14 @@ import java.util.*;
 // It organizes and stores Cards that are under the same stage
 // of a workflow.
 public class Column implements JsonSerializable {
-    public static final String EMPTY_COLUMN_NAME = "Untitled column";
+    public static final String DEFAULT_COLUMN_NAME = "Unnamed column";
 
     private String name;
     private final List<Card> cards;
 
-    // EFFECTS: constructs a new Column with a name (or a default if blank) and no cards
+    // EFFECTS: constructs a new Column with a name (or DEFAULT_COLUMN_NAME if blank) and no cards
     public Column(String name) {
-        this.name = !name.isBlank() ? name : EMPTY_COLUMN_NAME;
+        this.name = !name.isBlank() ? name : DEFAULT_COLUMN_NAME;
         this.cards = new ArrayList<>();
     }
 
@@ -96,9 +96,9 @@ public class Column implements JsonSerializable {
     }
 
     // MODIFIES: this
-    // EFFECTS: sets the name of this column or a default if blank
+    // EFFECTS: sets the name of this column or DEFAULT_COLUMN_NAME if blank
     public void setName(String name) {
-        this.name = !name.isBlank() ? name : EMPTY_COLUMN_NAME;
+        this.name = !name.isBlank() ? name : DEFAULT_COLUMN_NAME;
     }
 
     // EFFECTS: gets the total story points of all cards within this column

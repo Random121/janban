@@ -65,8 +65,8 @@ public class KanbanBoardTest {
 
         assertEquals(3, board.getColumns().size());
 
-        assertEquals("Backlog", board.getColumn(0).getName());
-        assertEquals("In Progress", board.getColumn(1).getName());
+        assertEquals(KanbanBoard.DEFAULT_BACKLOG_COLUMN_NAME, board.getColumn(0).getName());
+        assertEquals(KanbanBoard.DEFAULT_WIP_COLUMN_NAME, board.getColumn(1).getName());
         assertEquals(COMPLETED_COLUMN_NAME, board.getColumn(2).getName());
 
         assertNotNull(board.getCompletedColumn());
@@ -75,7 +75,9 @@ public class KanbanBoardTest {
 
     @Test
     public void testAddDefaultColumnsExpectDuplicateColumnNameException() {
-        KanbanBoard board = new KanbanBoard("Kanban Board", "Kanban board description", "Backlog");
+        KanbanBoard board = new KanbanBoard("Kanban Board",
+                                            "Kanban board description",
+                                            KanbanBoard.DEFAULT_BACKLOG_COLUMN_NAME);
 
         try {
             board.addDefaultColumns();
@@ -101,7 +103,7 @@ public class KanbanBoardTest {
 
     @Test
     public void testAddColumnOnceExpectDuplicateColumnNameException() {
-        Column duplicateColumn = new Column("In Progress");
+        Column duplicateColumn = new Column(KanbanBoard.DEFAULT_WIP_COLUMN_NAME);
 
         try {
             board.addColumn(duplicateColumn);
@@ -269,13 +271,13 @@ public class KanbanBoardTest {
             // This exception should have been thrown
         }
 
-        assertEquals("Backlog", firstColumn.getName());
+        assertEquals(KanbanBoard.DEFAULT_BACKLOG_COLUMN_NAME, firstColumn.getName());
     }
 
     @Test
     public void testEditColumnNameExpectDuplicateColumnNameExceptionEmptyName() {
         Column firstColumn = board.getColumn(0);
-        Column secondColumn = board .getColumn(1);
+        Column secondColumn = board.getColumn(1);
 
         try {
             board.editColumnName(firstColumn, "");
@@ -283,7 +285,7 @@ public class KanbanBoardTest {
             fail("An exception should not have been thrown");
         }
 
-        assertEquals(Column.EMPTY_COLUMN_NAME, firstColumn.getName());
+        assertEquals(Column.DEFAULT_COLUMN_NAME, firstColumn.getName());
 
         try {
             board.editColumnName(secondColumn, "");
@@ -292,7 +294,7 @@ public class KanbanBoardTest {
             // This exception should have been thrown
         }
 
-        assertEquals("In Progress", secondColumn.getName());
+        assertEquals(KanbanBoard.DEFAULT_WIP_COLUMN_NAME, secondColumn.getName());
     }
 
     @Test
@@ -305,7 +307,7 @@ public class KanbanBoardTest {
             fail("An exception should not have been thrown");
         }
 
-        assertEquals(Column.EMPTY_COLUMN_NAME, firstColumn.getName());
+        assertEquals(Column.DEFAULT_COLUMN_NAME, firstColumn.getName());
     }
 
     @Test

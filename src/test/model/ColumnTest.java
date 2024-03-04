@@ -70,7 +70,7 @@ public class ColumnTest {
     public void testConstructorEmptyNameDefault() {
         Column column = new Column("");
 
-        assertEquals(Column.EMPTY_COLUMN_NAME, column.getName());
+        assertEquals(Column.DEFAULT_COLUMN_NAME, column.getName());
     }
 
     @Test
@@ -224,7 +224,7 @@ public class ColumnTest {
     public void testSetNameEmptyNameDefault() {
         column.setName("");
 
-        assertEquals(Column.EMPTY_COLUMN_NAME, column.getName());
+        assertEquals(Column.DEFAULT_COLUMN_NAME, column.getName());
     }
 
     private Card makeCardOrFail(String title,

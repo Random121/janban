@@ -11,8 +11,8 @@ import java.util.List;
 // This class represents a kanban board with a name and description that contains
 // columns that each represent a stage within a workflow.
 public class KanbanBoard implements JsonSerializable {
-    private static final String DEFAULT_BACKLOG_COLUMN_NAME = "Backlog";
-    private static final String DEFAULT_WIP_COLUMN_NAME = "In Progress";
+    public static final String DEFAULT_BACKLOG_COLUMN_NAME = "Backlog";
+    public static final String DEFAULT_WIP_COLUMN_NAME = "In Progress";
 
     private final String name;
     private final String description;
@@ -42,7 +42,7 @@ public class KanbanBoard implements JsonSerializable {
         Column backlog = new Column(DEFAULT_BACKLOG_COLUMN_NAME);
         Column inProgress = new Column(DEFAULT_WIP_COLUMN_NAME);
 
-        // These two methods should never throw an exception.
+        // These two calls should never throw an exception.
         addColumn(backlog);
         addColumn(inProgress);
 
@@ -89,21 +89,21 @@ public class KanbanBoard implements JsonSerializable {
         }
 
         // Set new name to default if necessary
-        newName = !newName.isBlank() ? newName : Column.EMPTY_COLUMN_NAME;
+        String newNameOrDefault = !newName.isBlank() ? newName : Column.DEFAULT_COLUMN_NAME;
 
-        if (hasColumnWithName(newName)) {
-            throw new DuplicateColumnException(newName);
+        if (hasColumnWithName(newNameOrDefault)) {
+            throw new DuplicateColumnException(newNameOrDefault);
         }
 
         if (column == completedColumn) {
             completedColumn = null;
         }
 
-        if (newName.equals(completedColumnName)) {
+        if (newNameOrDefault.equals(completedColumnName)) {
             completedColumn = column;
         }
 
-        column.setName(newName);
+        column.setName(newNameOrDefault);
     }
 
     public Column getColumn(int index) {

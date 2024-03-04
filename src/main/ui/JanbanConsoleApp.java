@@ -21,9 +21,8 @@ public class JanbanConsoleApp implements RunnableApp {
     private KanbanBoardList kanbanBoards;
     private KanbanBoard currentKanbanBoard;
 
-    // This is used by utility methods in the class
-    // for displaying better looking menus
-    private final Deque<String> menuEnds;
+    // This is used by utility methods for displaying better looking menus
+    private final Deque<String> menuClosingStrings;
 
     // EFFECTS: constructs a new console app for Janban with
     //          no kanban boards, no menus, a json writer, and a json reader
@@ -32,11 +31,10 @@ public class JanbanConsoleApp implements RunnableApp {
         kanbanJsonReader = new KanbanJsonReader(SAVE_DATA_FILE);
 
         kanbanBoards = new KanbanBoardList();
-        menuEnds = new ArrayDeque<>();
+        menuClosingStrings = new ArrayDeque<>();
     }
 
-    // EFFECTS: runs the Janban console app, starting
-    //          from the main menu
+    // EFFECTS: runs the Janban console app, starting from the main menu
     public void run() {
         System.out.println("====================================");
         System.out.println("Janban: A kanban board made in Java!");
@@ -68,8 +66,7 @@ public class JanbanConsoleApp implements RunnableApp {
         boolean completed = false;
 
         do {
-            String command = ConsoleHelper.readString("Would you like to load previously saved boards (y/n)? ",
-                                                      true);
+            String command = ConsoleHelper.readString("Would you like to load previously saved boards (y/n)? ", true);
 
             switch (command) {
                 case "y":
@@ -87,8 +84,7 @@ public class JanbanConsoleApp implements RunnableApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: loads the kanban boards from the save file and returns whether the
-    //          load was successful
+    // EFFECTS: loads the kanban boards from the save file and returns whether it was successful
     private boolean loadBoardsFromFile() {
         try {
             kanbanBoards = kanbanJsonReader.read();
@@ -111,8 +107,7 @@ public class JanbanConsoleApp implements RunnableApp {
         boolean completed = false;
 
         do {
-            String command = ConsoleHelper.readString("Would you like to save all your boards (y/n)? ",
-                                                      true);
+            String command = ConsoleHelper.readString("Would you like to save all your boards (y/n)? ", true);
 
             switch (command) {
                 case "y":
@@ -129,8 +124,7 @@ public class JanbanConsoleApp implements RunnableApp {
         } while (!completed);
     }
 
-    // EFFECTS: saves the kanban boards to the save file and returns whether the
-    //          save was successful
+    // EFFECTS: saves the kanban boards to the save file and returns whether it was successful
     private boolean saveBoardsToFile() {
         try {
             kanbanJsonWriter.open();
@@ -877,16 +871,14 @@ public class JanbanConsoleApp implements RunnableApp {
         System.out.println(title);
         System.out.println("-".repeat(titleLength));
 
-        menuEnds.push("=".repeat(titleLength));
+        menuClosingStrings.push("=".repeat(titleLength));
     }
 
     // MODIFIES: this
     // EFFECTS: displays a corresponding ending delimiter for a menu
-    // EXAMPLE:
-    // ===============
     private void displayMenuEnd(boolean pause) {
         ConsoleHelper.newLine();
-        System.out.println(menuEnds.pop());
+        System.out.println(menuClosingStrings.pop());
 
         if (pause) {
             ConsoleHelper.pause();
@@ -929,6 +921,7 @@ public class JanbanConsoleApp implements RunnableApp {
             case "user story":
             case "story":
                 return CardType.USER_STORY;
+            case "todo":
             case "task":
                 return CardType.TASK;
             case "bug":

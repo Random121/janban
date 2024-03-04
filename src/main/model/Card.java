@@ -10,7 +10,7 @@ import java.util.Set;
 // within a Kanban Board. It stores information relating to
 // a specific goal/task.
 public class Card implements JsonSerializable {
-    public static final String EMPTY_CARD_TITLE = "Untitled card";
+    public static final String DEFAULT_CARD_TITLE = "Untitled card";
 
     private String title;
     private String description;
@@ -25,7 +25,7 @@ public class Card implements JsonSerializable {
     // the card.
     private Column containingColumn;
 
-    // EFFECTS: constructs a new Card with a given title (or a default if blank),
+    // EFFECTS: constructs a new Card with a given title (or DEFAULT_CARD_TITLE if blank),
     //          description, assignee, type, tags, story points, and no containing column.
     //          throws an NegativeStoryPointsException if the story point amount is negative.
     public Card(String title,
@@ -36,7 +36,7 @@ public class Card implements JsonSerializable {
                 int storyPoints) throws NegativeStoryPointsException {
         assertStoryPointsNotNegative(storyPoints);
 
-        this.title = !title.isBlank() ? title : EMPTY_CARD_TITLE;
+        this.title = !title.isBlank() ? title : DEFAULT_CARD_TITLE;
         this.description = description;
         this.assignee = assignee;
         this.type = type;
@@ -78,10 +78,9 @@ public class Card implements JsonSerializable {
     }
 
     // MODIFIES: this
-    // EFFECTS: sets the title of the current card
-    //          or a default if blank
+    // EFFECTS: sets the title of the current card or DEFAULT_CARD_TITLE if blank
     public void setTitle(String title) {
-        this.title = !title.isBlank() ? title : EMPTY_CARD_TITLE;
+        this.title = !title.isBlank() ? title : DEFAULT_CARD_TITLE;
     }
 
     public String getDescription() {

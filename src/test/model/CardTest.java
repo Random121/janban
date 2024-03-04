@@ -76,7 +76,7 @@ public class CardTest {
         }
 
         assertNotNull(card);
-        assertEquals(Card.EMPTY_CARD_TITLE, card.getTitle());
+        assertEquals(Card.DEFAULT_CARD_TITLE, card.getTitle());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class CardTest {
     public void testSetTitleEmptyTitleDefault() {
         card.setTitle("");
 
-        assertEquals(Card.EMPTY_CARD_TITLE, card.getTitle());
+        assertEquals(Card.DEFAULT_CARD_TITLE, card.getTitle());
     }
 
     @Test
