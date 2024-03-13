@@ -1,10 +1,11 @@
-package ui;
+package ui.console;
 
 import model.*;
 import model.exceptions.*;
 import org.json.JSONException;
 import persistence.KanbanJsonReader;
 import persistence.KanbanJsonWriter;
+import ui.RunnableApp;
 
 import java.io.IOException;
 import java.util.*;

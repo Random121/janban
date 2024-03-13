@@ -1,33 +1,63 @@
-{"boards": [{
-    "columns": [
-        {
-            "cards": [],
-            "name": "In Progress"
-        },
-        {
-            "cards": [],
-            "name": "Done"
-        },
-        {
-            "cards": [],
-            "name": "Untitled column"
-        },
-        {
-            "cards": [{
-                "storyPoints": 10,
-                "description": "desc",
-                "assignee": "ass",
-                "title": "My Card",
-                "type": "TASK",
-                "tags": [
-                    "tag1",
-                    "tag22"
-                ]
-            }],
-            "name": "My Column"
-        }
-    ],
-    "name": "My Project",
-    "description": "This is my project",
-    "completedColumnName": "Done"
-}]}
+{"boards": [
+    {
+        "columns": [
+            {
+                "cards": [{
+                    "storyPoints": 10,
+                    "description": "test",
+                    "assignee": "test",
+                    "title": "Untitled card",
+                    "type": "USER_STORY",
+                    "tags": [
+                        "test4",
+                        "123",
+                        "234 test"
+                    ]
+                }],
+                "name": "Backlog"
+            },
+            {
+                "cards": [],
+                "name": "In Progress"
+            },
+            {
+                "cards": [],
+                "name": "Done"
+            },
+            {
+                "cards": [],
+                "name": "Done1"
+            },
+            {
+                "cards": [],
+                "name": "Done2"
+            }
+        ],
+        "name": "Test",
+        "description": "this is a test",
+        "completedColumnName": "Done"
+    },
+    {
+        "columns": [
+            {
+                "cards": [],
+                "name": "Backlog"
+            },
+            {
+                "cards": [],
+                "name": "In Progress"
+            },
+            {
+                "cards": [],
+                "name": "COmpleted"
+            },
+            {
+                "cards": [],
+                "name": "Completed"
+            }
+        ],
+        "name": "test",
+        "description": "test",
+        "completedColumnName": "Completed"
+    }
+]}

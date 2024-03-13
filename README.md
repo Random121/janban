@@ -17,7 +17,7 @@ I have worked with many tools that implements a kanban board in the past, an exa
 However, most of these services are fully online, and also not as customizable. So Janban serves as an applications
 which allows people to use a kanban board fully offline and is also fully customizable (it is open source!).
 
-## Usage Tips
+## Instructions for Grader
 
 ### Console App
 - When you create a new kanban board, you have to specify the `completed column name`
@@ -27,6 +27,9 @@ which allows people to use a kanban board fully offline and is also fully custom
   - Cards which are done should be moved to this column if you want the kanban board statistics to work properly
 - The first column of the kanban board is designated as the backlog
   - New cards will always be added there, but they can be moved elsewhere after
+
+### Graphical App
+- TODO
 
 ## User Stories
 
