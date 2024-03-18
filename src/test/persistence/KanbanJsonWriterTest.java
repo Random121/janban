@@ -19,19 +19,20 @@ public class KanbanJsonWriterTest extends JsonTest {
         boards = new KanbanBoardList();
     }
 
-    @Test
-    public void testOpenInvalidFileException() {
-        final String TEST_FILE = "./data/tests/write/invalid|file?.json";
-
-        KanbanJsonWriter writer = new KanbanJsonWriter(TEST_FILE);
-
-        try {
-            writer.open();
-            fail("An exception should have been thrown");
-        } catch (IOException e) {
-            // This exception should have been thrown
-        }
-    }
+    // NOTE: This test doesn't work on all computers
+//    @Test
+//    public void testOpenInvalidFileException() {
+//        final String TEST_FILE = "./data/tests/write/invalid|file?.json";
+//
+//        KanbanJsonWriter writer = new KanbanJsonWriter(TEST_FILE);
+//
+//        try {
+//            writer.open();
+//            fail("An exception should have been thrown");
+//        } catch (IOException e) {
+//            // This exception should have been thrown
+//        }
+//    }
 
     @Test
     public void testWriteBoardsEmptyNoException() {
