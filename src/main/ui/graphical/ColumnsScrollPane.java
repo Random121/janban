@@ -11,7 +11,9 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
+// This class represents a viewable list of columns containing cards.
 public class ColumnsScrollPane extends JScrollPane {
     private static final Color COMPLETED_COLUMN_COLOR = new Color(209, 245, 189);
     private static final Dimension COLUMN_DIM = new Dimension(250, 0);
@@ -22,9 +24,11 @@ public class ColumnsScrollPane extends JScrollPane {
     private final ListSelectionChangedListener selectionChangedListener;
     private final List<JList<Card>> cardLists;
 
+    private Function<Column, List<Card>> filteringGetter;
+
     // EFFECTS: Creates a ScrollPane containing Columns with a kanban board
-    //          a card list cell renderer, a list selection listener, and
-    //          no card lists.
+    //          a card list cell renderer, a list selection listener,
+    //          no card lists, and no filter.
     public ColumnsScrollPane(KanbanBoard board) {
         super();
 
@@ -33,6 +37,7 @@ public class ColumnsScrollPane extends JScrollPane {
         this.cardListCellRenderer = new CardListCellRenderer();
         this.selectionChangedListener = new ListSelectionChangedListener();
         this.cardLists = new ArrayList<>();
+        this.filteringGetter = null;
     }
 
     // MODIFIES: this
@@ -47,7 +52,7 @@ public class ColumnsScrollPane extends JScrollPane {
         for (Column column : board.getColumns()) {
             DefaultListModel<Card> cardListModel = new DefaultListModel<>();
 
-            cardListModel.addAll(column.getCards());
+            cardListModel.addAll(filteringGetter == null ? column.getCards() : filteringGetter.apply(column));
 
             TitledBorder border = new TitledBorder(column.getName());
             border.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -92,7 +97,19 @@ public class ColumnsScrollPane extends JScrollPane {
         return null;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Sets a filtering getter that will be used to restrict what cards
+    //          will be displayed. A value of null will mean no filtering is performed.
+    public void setFilteringGetter(Function<Column, List<Card>> filteringGetter) {
+        this.filteringGetter = filteringGetter;
+    }
+
+    // This class is listener for changes in the selected card.
     private class ListSelectionChangedListener implements ListSelectionListener {
+
+        // EFFECTS: When a new item is selected between all the columns, it
+        //          clears all previously selected values to ensure only one
+        //          item is selected across all columns.
         @Override
         public void valueChanged(ListSelectionEvent e) {
             // prevents repeatedly clearing selection for other lists
@@ -101,7 +118,7 @@ public class ColumnsScrollPane extends JScrollPane {
                 return;
             }
 
-            JList<Card> listThatChanged = (JList<Card>)e.getSource();
+            JList<Card> listThatChanged = (JList<Card>) e.getSource();
 
             // we ignore this change since it is caused by clearing the selection for a list,
             // and we only want to care when a new selection happens

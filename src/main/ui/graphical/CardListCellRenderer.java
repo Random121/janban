@@ -6,7 +6,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+// This class is for rendering cards in the column JList in a pretty manner.
 public class CardListCellRenderer implements ListCellRenderer<Card> {
+
+    // EFFECTS: Gets the rendered view of the card.
     @Override
     public Component getListCellRendererComponent(JList<? extends Card> list,
                                                   Card value,

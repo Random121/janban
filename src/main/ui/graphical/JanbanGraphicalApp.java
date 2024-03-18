@@ -2,6 +2,7 @@ package ui.graphical;
 
 import model.KanbanBoardList;
 import model.exceptions.CorruptedSaveDataException;
+import org.json.JSONException;
 import persistence.KanbanJsonReader;
 import persistence.KanbanJsonWriter;
 import ui.RunnableApp;
@@ -14,9 +15,10 @@ import java.io.IOException;
 
 // This class represents the main menu for the Janban graphical app.
 public class JanbanGraphicalApp extends JFrame implements RunnableApp {
-    private static final Dimension FRAME_DIM = new Dimension(800, 600);
+    private static final Dimension FRAME_DIMENSIONS = new Dimension(800, 600);
     private static final String SAVE_DATA_FILE = "./data/save.json";
     private static final String LOGO_IMAGE_FILE = "./assets/logo.png";
+    private static final Dimension LOGO_DIMENSIONS = new Dimension(200, 134);
 
     private final KanbanJsonWriter kanbanJsonWriter;
     private final KanbanJsonReader kanbanJsonReader;
@@ -50,7 +52,7 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
     private void setupStyle() {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-        setPreferredSize(FRAME_DIM);
+        setPreferredSize(FRAME_DIMENSIONS);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
     }
@@ -58,14 +60,12 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
     // MODIFIES: this
     // EFFECTS: Creates and places the logo for Janban on the main menu JFrame.
     private void setupLogo() {
-        final Dimension LOGO_DIM = new Dimension(200, 134);
-
         JPanel logoPanel = new JPanel();
         logoPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        logoPanel.setMaximumSize(LOGO_DIM);
+        logoPanel.setMaximumSize(LOGO_DIMENSIONS);
         logoPanel.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
 
-        ImageIcon image = getScaledImageIcon(LOGO_IMAGE_FILE, LOGO_DIM.width, LOGO_DIM.height);
+        ImageIcon image = getScaledImageIcon(LOGO_IMAGE_FILE, LOGO_DIMENSIONS.width, LOGO_DIMENSIONS.height);
         JLabel imageLabel = new JLabel(image);
 
         logoPanel.add(imageLabel);
@@ -76,7 +76,7 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
     // MODIFIES: this
     // EFFECTS: Creates and places the load and skip loading buttons for Janban on the main menu JFrame.
     private void setupButtons() {
-        final Dimension BUTTON_DIM = new Dimension(100, 30);
+        final Dimension BUTTON_DIMENSIONS = new Dimension(100, 30);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
@@ -85,7 +85,7 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
 
         // removes that ugly box around the button text
         newProjectButton.setFocusable(false);
-        newProjectButton.setPreferredSize(BUTTON_DIM);
+        newProjectButton.setPreferredSize(BUTTON_DIMENSIONS);
         newProjectButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         newProjectButton.addActionListener(new LoadProjectsButtonListener());
 
@@ -93,7 +93,7 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
 
         // removes that ugly box around the button text
         loadProjectButton.setFocusable(false);
-        loadProjectButton.setPreferredSize(BUTTON_DIM);
+        loadProjectButton.setPreferredSize(BUTTON_DIMENSIONS);
         loadProjectButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         loadProjectButton.addActionListener(new SkipLoadingButtonListener());
 
@@ -128,6 +128,8 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
     }
 
     private class LoadProjectsButtonListener implements ActionListener {
+
+        // EFFECTS: Opens a project selection menu for the previously saved projects.
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -135,14 +137,20 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
 
                 openProjectSelectionMenu(kanbanBoards);
             } catch (IOException ex) {
-                System.out.println("Failed to open the save file!");
-            } catch (CorruptedSaveDataException ex) {
-                System.out.println("Failed to read the save data!");
+                Popup.error(JanbanGraphicalApp.this,
+                            "Failed to open the save file!",
+                            "Error while loading");
+            } catch (CorruptedSaveDataException | JSONException ex) {
+                Popup.error(JanbanGraphicalApp.this,
+                            "Failed to read the save data!",
+                            "Error while loading");
             }
         }
     }
 
     private class SkipLoadingButtonListener implements ActionListener {
+
+        // EFFECTS: Opens a project selection menu for a new list of projects.
         @Override
         public void actionPerformed(ActionEvent e) {
             openProjectSelectionMenu(new KanbanBoardList());

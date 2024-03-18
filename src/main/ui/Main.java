@@ -1,5 +1,6 @@
 package ui;
 
+import ui.console.JanbanConsoleApp;
 import ui.graphical.JanbanGraphicalApp;
 
 public class Main {

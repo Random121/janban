@@ -8,6 +8,8 @@ import java.awt.*;
 
 // This class is for rendering items in the kanban boards JList in a pretty manner.
 public class KanbanBoardListCellRenderer implements ListCellRenderer<KanbanBoard> {
+
+    // EFFECTS: Gets the rendered view of the kanban board.
     @Override
     public Component getListCellRendererComponent(JList<? extends KanbanBoard> list,
                                                   KanbanBoard value,

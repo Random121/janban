@@ -2,16 +2,20 @@ package ui.graphical;
 
 import model.KanbanBoard;
 import model.KanbanBoardList;
+import model.exceptions.DuplicateColumnException;
 import persistence.KanbanJsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 // This class represents the project selection menu for the Janban graphical app.
 public class ProjectSelectionMenu extends JFrame {
-    private static final Dimension FRAME_DIM = new Dimension(800, 600);
+    private static final Dimension FRAME_DIMENSIONS = new Dimension(800, 600);
 
     private final KanbanJsonWriter jsonWriter;
     private final KanbanBoardList kanbanBoards;
@@ -47,26 +51,31 @@ public class ProjectSelectionMenu extends JFrame {
     private void setupStyle() {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-        setPreferredSize(FRAME_DIM);
+        setPreferredSize(FRAME_DIMENSIONS);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // we have a custom window closing behaviour to allow saving
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowCloseListener());
+
         setResizable(false);
     }
 
     // MODIFIES: this
     // EFFECTS: Creates and places the new project and load project buttons for the menu.
     private void setupButtons() {
+        final Dimension BUTTON_DIMENSIONS = new Dimension(25, 20);
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
         JButton newProjectButton = new JButton("New Project");
-        newProjectButton.setPreferredSize(new Dimension(25, 20));
+        newProjectButton.setPreferredSize(BUTTON_DIMENSIONS);
         // removes that ugly box around the button text
         newProjectButton.setFocusable(false);
         newProjectButton.addActionListener(new NewProjectButtonListener());
 
         JButton loadProjectButton = new JButton("Load Project");
-        loadProjectButton.setPreferredSize(new Dimension(25, 20));
+        loadProjectButton.setPreferredSize(BUTTON_DIMENSIONS);
         // removes that ugly box around the button text
         loadProjectButton.setFocusable(false);
         loadProjectButton.addActionListener(new LoadProjectButtonListener());
@@ -82,8 +91,7 @@ public class ProjectSelectionMenu extends JFrame {
     // MODIFIES: this
     // EFFECTS: Creates and places the list of projects on the menu.
     private void setupKanbanBoardList() {
-        final int WIDTH = 600;
-        final int HEIGHT = 400;
+        final Dimension LIST_DIMENSIONS = new Dimension(600, 400);
 
         JPanel kanbanBoardsPanel = new JPanel();
         kanbanBoardsPanel.setLayout(new BoxLayout(kanbanBoardsPanel, BoxLayout.X_AXIS));
@@ -104,8 +112,8 @@ public class ProjectSelectionMenu extends JFrame {
         this.kanbanBoardList = boardList;
 
         JScrollPane scrollPane = new JScrollPane(boardList);
-        scrollPane.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        scrollPane.setMaximumSize(new Dimension(WIDTH, HEIGHT));
+        scrollPane.setPreferredSize(LIST_DIMENSIONS);
+        scrollPane.setMaximumSize(LIST_DIMENSIONS);
 
         kanbanBoardsPanel.add(Box.createVerticalGlue());
         kanbanBoardsPanel.add(scrollPane);
@@ -122,23 +130,67 @@ public class ProjectSelectionMenu extends JFrame {
         kanbanBoardListModel.addAll(kanbanBoards.getBoards());
     }
 
-    private int testCounter = 0;
+    // EFFECTS: Returns the original string or defaultValue if it is blank.
+    private String getOrDefault(String string, String defaultValue) {
+        return string.isBlank() ? defaultValue : string;
+    }
 
     private class NewProjectButtonListener implements ActionListener {
+
+        // MODIFIES: this
+        // EFFECTS: Opens a popup for creation of a new project.
         @Override
         public void actionPerformed(ActionEvent e) {
-            KanbanBoard newBoard = new KanbanBoard("Test" + testCounter,
-                                                   "This is a description" + testCounter,
-                                                   "Done");
+            JTextField nameField = new JTextField();
+            JTextField descriptionField = new JTextField();
+            JTextField completedColumnNameField = new JTextField("Done");
+
+            JComponent[] inputs = {
+                    new JLabel("Name:"), nameField,
+                    new JLabel("Description:"), descriptionField,
+                    new JLabel("Completed column name:"), completedColumnNameField
+            };
+
+            boolean success = Popup.creatingPopup(ProjectSelectionMenu.this, inputs, "Create a new project");
+
+            if (!success) {
+                return;
+            }
+
+            String nameOrDefault = getOrDefault(nameField.getText(), "Unnamed project");
+            String completedColumnNameOrDefault = getOrDefault(completedColumnNameField.getText(), "Done");
+
+            createAndAddNewProject(nameOrDefault, descriptionField.getText(), completedColumnNameOrDefault);
+            synchronizeBoardModels();
+        }
+
+        // MODIFIES: this
+        // EFFECTS: Adds a new project and display a popup if an error occurs.
+        private void createAndAddNewProject(String name, String description, String completedColumnName) {
+            KanbanBoard newBoard = new KanbanBoard(name, description, completedColumnName);
+
+            try {
+                newBoard.addDefaultColumns();
+            } catch (DuplicateColumnException ex) {
+                String errorMessage = String.format("Your completed column name cannot be '%s' or '%s'",
+                                                    KanbanBoard.DEFAULT_BACKLOG_COLUMN_NAME,
+                                                    KanbanBoard.DEFAULT_WIP_COLUMN_NAME);
+
+                Popup.error(ProjectSelectionMenu.this,
+                            errorMessage,
+                            "Error while creating kanban board");
+
+                return;
+            }
 
             kanbanBoards.addBoard(newBoard);
-            synchronizeBoardModels();
-
-            testCounter++;
         }
     }
 
     private class LoadProjectButtonListener implements ActionListener {
+
+        // MODIFIES: this
+        // EFFECTS: Load the currently selected project.
         @Override
         public void actionPerformed(ActionEvent e) {
             KanbanBoard selectedBoard = kanbanBoardList.getSelectedValue();
@@ -155,6 +207,64 @@ public class ProjectSelectionMenu extends JFrame {
             }
 
             existingKanbanBoardMenu = new KanbanBoardMenu(selectedBoard, ProjectSelectionMenu.this);
+        }
+    }
+
+    // This class is a window hook to perform saving when the window is closing.
+    private class WindowCloseListener extends WindowAdapter {
+
+        // EFFECTS: Provide the user with the option to save their current projects
+        //          before the window is closed.
+        @Override
+        public void windowClosing(WindowEvent e) {
+            final String[] options = {"Yes", "No", "Cancel"};
+            final String defaultOption = options[2];
+
+            int input = JOptionPane.showOptionDialog(ProjectSelectionMenu.this,
+                                                     "Would you like to save all of your projects?",
+                                                     "Unsaved changes",
+                                                     JOptionPane.YES_NO_CANCEL_OPTION,
+                                                     JOptionPane.WARNING_MESSAGE,
+                                                     null,
+                                                     options,
+                                                     defaultOption);
+
+            // don't do anything
+            if (input == JOptionPane.CANCEL_OPTION || input == JOptionPane.CLOSED_OPTION) {
+                return;
+            }
+
+            if (input == JOptionPane.YES_OPTION) {
+                boolean success = performSave();
+
+                // cancel the closing of the window to prevent losing saved changes
+                if (!success) {
+                    return;
+                }
+            }
+
+            // close the window normally
+            dispose();
+            System.exit(0);
+        }
+
+        // EFFECTS: saves all the current boards and returns whether the
+        //          saving process was successful
+        private boolean performSave() {
+            try {
+                jsonWriter.open();
+            } catch (IOException ex) {
+                Popup.error(ProjectSelectionMenu.this,
+                            "Failed to open the save file!",
+                            "Error while saving");
+
+                return false;
+            }
+
+            jsonWriter.writeBoards(kanbanBoards);
+            jsonWriter.close();
+
+            return true;
         }
     }
 }
