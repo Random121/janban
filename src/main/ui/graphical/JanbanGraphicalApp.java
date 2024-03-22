@@ -127,6 +127,7 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
         dispose();
     }
 
+    // This class is a listener for when the load data button is clicked.
     private class LoadProjectsButtonListener implements ActionListener {
 
         // EFFECTS: Opens a project selection menu for the previously saved projects.
@@ -148,6 +149,7 @@ public class JanbanGraphicalApp extends JFrame implements RunnableApp {
         }
     }
 
+    // This class is a listener for when the skip loading data button is clicked.
     private class SkipLoadingButtonListener implements ActionListener {
 
         // EFFECTS: Opens a project selection menu for a new list of projects.

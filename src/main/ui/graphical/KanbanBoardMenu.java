@@ -140,6 +140,7 @@ public class KanbanBoardMenu extends JFrame {
         return tags;
     }
 
+    // This class is a listener for when the add column button is clicked.
     private class AddColumnButtonListener implements ActionListener {
 
         // MODIFIES: this
@@ -177,6 +178,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the edit column button is clicked.
     private class EditColumnButtonListener implements ActionListener {
 
         // MODIFIES: this
@@ -223,6 +225,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the remove column button is clicked.
     private class RemoveColumnButtonListener implements ActionListener {
 
         // MODIFIES: this
@@ -240,6 +243,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the add card button is clicked.
     private class AddCardButtonListener implements ActionListener {
 
         // EFFECTS: Handles the creation of a new card.
@@ -329,6 +333,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the edit card button is clicked.
     private class EditCardButtonListener implements ActionListener {
 
         // EFFECTS: Handles the editing of an existing card in the kanban board.
@@ -443,6 +448,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the remove card button is clicked.
     private class RemoveCardButtonListener implements ActionListener {
 
         // MODIFIES: this
@@ -468,6 +474,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the view card button is clicked.
     private class ViewCardButtonListener implements ActionListener {
 
         // EFFECTS: Handles displaying the currently selected card.
@@ -526,6 +533,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the view stats button is clicked.
     private class ViewStatisticsButtonListener implements ActionListener {
 
         // EFFECTS: Creates a popup that displays some statistics about the current board.
@@ -556,6 +564,7 @@ public class KanbanBoardMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the filter button is clicked.
     private class FilterButtonListener implements ActionListener {
         private static final String FILTER_BY_KEYWORDS = "Filter by keywords";
         private static final String FILTER_BY_TYPE = "Filter by type";

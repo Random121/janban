@@ -135,6 +135,7 @@ public class ProjectSelectionMenu extends JFrame {
         return string.isBlank() ? defaultValue : string;
     }
 
+    // This class is a listener for when the new project button is clicked.
     private class NewProjectButtonListener implements ActionListener {
 
         // MODIFIES: this
@@ -187,6 +188,7 @@ public class ProjectSelectionMenu extends JFrame {
         }
     }
 
+    // This class is a listener for when the load project button is clicked.
     private class LoadProjectButtonListener implements ActionListener {
 
         // MODIFIES: this
