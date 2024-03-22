@@ -20,16 +20,25 @@ which allows people to use a kanban board fully offline and is also fully custom
 ## Instructions for Grader
 
 ### Console App
+
 - When you create a new kanban board, you have to specify the `completed column name`
-  - This is the name of the column which holds cards you have completed
-  - Any new column with this name will also become the completed column
+    - This is the name of the column which holds cards you have completed
+    - Any new column with this name will also become the completed column
 - The column marked with a `[D]` is the completed/done column
-  - Cards which are done should be moved to this column if you want the kanban board statistics to work properly
+    - Cards which are done should be moved to this column if you want the kanban board statistics to work properly
 - The first column of the kanban board is designated as the backlog
-  - New cards will always be added there, but they can be moved elsewhere after
+    - New cards will always be added there, but they can be moved elsewhere after
 
 ### Graphical App
-- TODO
+
+- After loading a project, you can view a panel which displays the list of cards which were added to
+  columns and the list of columns which were added to the kanban board.
+- You can generate the two required list actions by clicking any of the buttons at the top of the kanban board. Some
+  examples include adding a card, filtering through the cards, and removing a column.
+- You can view the visual component (a logo image) on the main menu which appears right after opening the
+  app.
+- You are given the option to save all user data if you close the project selection window.
+- You are given the option to load all previous user data on the main menu.
 
 ## User Stories
 
@@ -39,7 +48,7 @@ As a user, I want to be able to...
 
 - create a kanban board with a name and description and add it to a list of kanban boards
 - view all the kanban boards I have created
-- create a column with a name and add it to the list of columns of the kanban board 
+- create a column with a name and add it to the list of columns of the kanban board
 - view all the columns I have created for a kanban board
 - edit the name of a column
 - remove a column from a kanban board
@@ -50,7 +59,6 @@ As a user, I want to be able to...
 - filter cards within all columns based on keywords or type
 - remove a card from a column
 - view basic statistics about the kanban board like the number of cards and story points
-
 
 ### Phase 2
 
