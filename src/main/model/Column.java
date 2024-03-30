@@ -28,6 +28,11 @@ public class Column implements JsonSerializable {
             return;
         }
 
+        {
+            String eventDescription = String.format("Adding card '%s' to column '%s'", card.getTitle(), name);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
+        }
+
         cards.add(card);
         card.setContainingColumn(this);
     }
@@ -37,6 +42,11 @@ public class Column implements JsonSerializable {
     public void removeCard(Card card) {
         if (!cards.contains(card)) {
             return;
+        }
+
+        {
+            String eventDescription = String.format("Removing card '%s' from column '%s'", card.getTitle(), name);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
         }
 
         cards.remove(card);
@@ -74,6 +84,14 @@ public class Column implements JsonSerializable {
         // Sort the cards by relevancy in descending order
         results.sort(Comparator.comparing(relevancyMapping::get, Comparator.reverseOrder()));
 
+        {
+            String eventDescription = String.format("Querying cards in column '%s' with keywords '%s' with %s results",
+                                                    name,
+                                                    String.join(",", keywords),
+                                                    results.size());
+            EventLog.getInstance().logEvent(new Event(eventDescription));
+        }
+
         return results;
     }
 
@@ -86,6 +104,11 @@ public class Column implements JsonSerializable {
             if (card.getType() == type) {
                 results.add(card);
             }
+        }
+
+        {
+            String eventDescription = String.format("Querying cards of type '%s' in column '%s'", type, name);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
         }
 
         return results;

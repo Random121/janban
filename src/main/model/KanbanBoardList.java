@@ -18,6 +18,11 @@ public class KanbanBoardList implements JsonSerializable {
     // MODIFIES: this
     // EFFECTS: adds a new kanban board
     public void addBoard(KanbanBoard board) {
+        {
+            String eventDescription = String.format("Adding kanban board '%s' to list", board.getName());
+            EventLog.getInstance().logEvent(new Event(eventDescription));
+        }
+
         this.boards.add(board);
     }
 

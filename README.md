@@ -66,3 +66,50 @@ As a user, I want to be able to...
 
 - have the option to save all the kanban boards I have created to file when quitting the application
 - have the option to load all the kanban boards I have previously saved when starting the application
+
+### Phase 4
+
+#### Task 2
+
+```
+Fri Mar 29 17:13:49 PDT 2024
+Adding default columns to kanban board 'My Project'
+Fri Mar 29 17:13:49 PDT 2024
+Adding column 'Backlog' to kanban board 'My Project'
+Fri Mar 29 17:13:49 PDT 2024
+Adding column 'In Progress' to kanban board 'My Project'
+Fri Mar 29 17:13:49 PDT 2024
+Adding column 'Done' to kanban board 'My Project'
+Fri Mar 29 17:13:49 PDT 2024
+Adding kanban board 'My Project' to list
+Fri Mar 29 17:13:57 PDT 2024
+Moving card 'Center div' from column 'None' to 'Backlog'
+Fri Mar 29 17:13:57 PDT 2024
+Adding card 'Center div' to column 'Backlog'
+Fri Mar 29 17:14:04 PDT 2024
+Moving card 'Add dark mode' from column 'None' to 'Backlog'
+Fri Mar 29 17:14:04 PDT 2024
+Adding card 'Add dark mode' to column 'Backlog'
+Fri Mar 29 17:14:09 PDT 2024
+Removing card 'Center div' from column 'Backlog'
+Fri Mar 29 17:14:15 PDT 2024
+Adding column 'Under Review' to kanban board 'My Project'
+Fri Mar 29 17:14:24 PDT 2024
+Querying relevancy score for card 'Add dark mode' with result '2'
+Fri Mar 29 17:14:24 PDT 2024
+Querying cards in column 'Backlog' with keywords 'add,dark' with 1 results
+Fri Mar 29 17:14:24 PDT 2024
+Querying relevancy score for card 'Center div' with result '0'
+Fri Mar 29 17:14:24 PDT 2024
+Querying cards in column 'In Progress' with keywords 'add,dark' with 0 results
+Fri Mar 29 17:14:24 PDT 2024
+Querying cards in column 'Done' with keywords 'add,dark' with 0 results
+Fri Mar 29 17:14:24 PDT 2024
+Querying cards in column 'Under Review' with keywords 'add,dark' with 0 results
+Fri Mar 29 17:14:36 PDT 2024
+Editing column name from 'Backlog' to 'Not Started' in kanban board 'My Project'
+Fri Mar 29 17:14:40 PDT 2024
+Removing card 'Add dark mode' from column 'Not Started'
+Fri Mar 29 17:14:44 PDT 2024
+Removing column 'Under Review' from kanban board 'My Project'
+```

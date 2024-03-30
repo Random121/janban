@@ -1,5 +1,7 @@
 package ui.graphical;
 
+import model.Event;
+import model.EventLog;
 import model.KanbanBoard;
 import model.KanbanBoardList;
 import model.exceptions.DuplicateColumnException;
@@ -245,6 +247,8 @@ public class ProjectSelectionMenu extends JFrame {
                 }
             }
 
+            printEventLog();
+
             // close the window normally
             dispose();
             System.exit(0);
@@ -267,6 +271,13 @@ public class ProjectSelectionMenu extends JFrame {
             jsonWriter.close();
 
             return true;
+        }
+
+        // EFFECTS: print all events stored within the event log
+        private void printEventLog() {
+            for (Event event : EventLog.getInstance()) {
+                System.out.println(event);
+            }
         }
     }
 }

@@ -70,6 +70,13 @@ public class Card implements JsonSerializable {
             }
         }
 
+        {
+            String eventDescription = String.format("Querying relevancy score for card '%s' with result '%s'",
+                                                   this.title,
+                                                   score);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
+        }
+
         return score;
     }
 

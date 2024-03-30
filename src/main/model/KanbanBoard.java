@@ -39,6 +39,11 @@ public class KanbanBoard implements JsonSerializable {
     //          completed column for this board.
     //          throws an DuplicateColumnException if there is already a column with the same name.
     public void addDefaultColumns() throws DuplicateColumnException {
+        {
+            String eventDescription = String.format("Adding default columns to kanban board '%s'", this.name);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
+        }
+
         Column backlog = new Column(DEFAULT_BACKLOG_COLUMN_NAME);
         Column inProgress = new Column(DEFAULT_WIP_COLUMN_NAME);
 
@@ -63,6 +68,11 @@ public class KanbanBoard implements JsonSerializable {
             completedColumn = column;
         }
 
+        {
+            String eventDescription = String.format("Adding column '%s' to kanban board '%s'", column.getName(), name);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
+        }
+
         columns.add(column);
     }
 
@@ -75,6 +85,11 @@ public class KanbanBoard implements JsonSerializable {
 
         if (column == completedColumn) {
             completedColumn = null;
+        }
+
+        {
+            String eventDescription = String.format("Removing column '%s' from kanban board '%s'", column.getName(), name);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
         }
 
         columns.remove(column);
@@ -101,6 +116,14 @@ public class KanbanBoard implements JsonSerializable {
 
         if (newNameOrDefault.equals(completedColumnName)) {
             completedColumn = column;
+        }
+
+        {
+            String eventDescription = String.format("Editing column name from '%s' to '%s' in kanban board '%s'",
+                                                    column.getName(),
+                                                    newNameOrDefault,
+                                                    name);
+            EventLog.getInstance().logEvent(new Event(eventDescription));
         }
 
         column.setName(newNameOrDefault);
@@ -137,6 +160,14 @@ public class KanbanBoard implements JsonSerializable {
 
         if (containingColumn != null) {
             containingColumn.removeCard(card);
+        }
+
+        {
+            String eventDescription = String.format("Moving card '%s' from column '%s' to '%s'",
+                                                    card.getTitle(),
+                                                    containingColumn == null ? "None" : containingColumn.getName(),
+                                                    newColumn.getName());
+            EventLog.getInstance().logEvent(new Event(eventDescription));
         }
 
         newColumn.addCard(card);
