@@ -88,7 +88,9 @@ public class KanbanBoard implements JsonSerializable {
         }
 
         {
-            String eventDescription = String.format("Removing column '%s' from kanban board '%s'", column.getName(), name);
+            String eventDescription = String.format("Removing column '%s' from kanban board '%s'",
+                                                    column.getName(),
+                                                    name);
             EventLog.getInstance().logEvent(new Event(eventDescription));
         }
 
