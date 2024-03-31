@@ -22,7 +22,7 @@ public class ProjectSelectionMenu extends JFrame {
     private final KanbanJsonWriter jsonWriter;
     private final KanbanBoardList kanbanBoards;
 
-    private JFrame existingKanbanBoardMenu;
+    private KanbanBoardMenu existingKanbanBoardMenu;
 
     private DefaultListModel<KanbanBoard> kanbanBoardListModel;
     private JList<KanbanBoard> kanbanBoardList;
