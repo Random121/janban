@@ -1,5 +1,7 @@
 package persistence;
 
+import model.Event;
+import model.EventLog;
 import model.KanbanBoardList;
 import org.json.JSONObject;
 
@@ -36,6 +38,8 @@ public class KanbanJsonWriter {
     // MODIFIES: this
     // EFFECTS: writes the JSON representation of the kanban boards to file
     public void writeBoards(KanbanBoardList boards) {
+        EventLog.getInstance().logEvent(new Event("Writing kanban boards to " + destinationFile));
+
         JSONObject json = boards.toJson();
         writeToFile(json.toString(TAB_WIDTH));
     }

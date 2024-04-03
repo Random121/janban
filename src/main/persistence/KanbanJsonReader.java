@@ -30,6 +30,8 @@ public class KanbanJsonReader {
     //          throws an IOException if an error occurs with reading the file
     //          throws an CorruptedSaveDataException if the save file has invalid data
     public KanbanBoardList read() throws IOException, CorruptedSaveDataException {
+        EventLog.getInstance().logEvent(new Event("Reading kanban boards from " + sourceFile));
+
         String jsonString = readFile(sourceFile);
         JSONObject json = new JSONObject(jsonString);
         return readKanbanBoardList(json);
