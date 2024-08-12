@@ -16,8 +16,6 @@ import java.util.stream.Stream;
 
 // This class represents a reader that reads a list of kanban boards
 // from a local JSON file.
-// This interface was modeled after the JsonSerializationDemo project
-// (https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo).
 public class KanbanJsonReader {
     private final String sourceFile;
 

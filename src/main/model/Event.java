@@ -3,10 +3,7 @@ package model;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Represents an alarm system event.
- * Taken from https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.
- */
+// Represents an alarm system event.
 public class Event {
     private static final int HASH_CONSTANT = 13;
     private final Date dateLogged;
